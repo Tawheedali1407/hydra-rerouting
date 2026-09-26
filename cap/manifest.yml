@@ -1,0 +1,8 @@
+applications:
+  - name: hydra-rerouting
+    path: .
+    memory: 256M
+    disk_quota: 512M
+    buildpacks: [nodejs_buildpack]
+    command: npm start
+    random-route: true

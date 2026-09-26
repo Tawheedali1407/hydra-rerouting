@@ -1,0 +1,7 @@
+code;title;kind;mode;severity;confidence;lat;lon;radiusKm;assets;chosenRoute;status;detectedAt;responseSeconds;posAffected;posProtected;ID
+INC-2026-0412;Flood · NH44 near Krishnagiri;Flood;Road;High;0.92;12.52;78.21;12;3 trucks;Dharmapuri bypass;Resolved;2026-09-02T04:41:00Z;161;5;5;e3152781-2a02-568b-be3f-a5d8c648d789
+INC-2026-0398;Port congestion · Colombo;Port congestion;Sea;Medium;0.88;6.95;79.84;40;2 vessels;Divert to Vizhinjam;Resolved;2026-08-21T09:12:00Z;128;4;3;82f163ab-257b-58b9-8a9f-69811f03a956
+INC-2026-0377;Landslide · Shiradi Ghat NH75;Landslide;Road;High;0.9;12.87;75.65;8;2 trucks;Via Sampaje–Madikeri;Resolved;2026-08-06T01:55:00Z;178;3;2;17f3f8a6-12ca-59f1-9d4c-1a91806aa098
+INC-2026-0351;Cyclonic storm ARB-02 · Arabian Sea;Weather;Sea;Critical;0.95;16.5;63.0;450;3 vessels;Hold at Salalah;Resolved;2026-07-18T12:30:00Z;149;6;6;15de2a09-1983-5d93-a517-883126b24d3d
+INC-2026-0333;Engine failure · MV Coral Meridian;Mechanical;Rescue;Critical;0.97;11.2;85.1;25;1 vessel;USV + tug tow to Chennai;Resolved;2026-07-03T22:05:00Z;72;2;2;8a912416-b43d-51a8-b8f7-8fc96f3ae5ee
+INC-2026-0310;Dense fog · Chennai port approach;Weather;Sea;Medium;0.84;13.1;80.35;20;4 vessels;Anchor and re-sequence berths;Resolved;2026-06-19T00:40:00Z;204;4;4;9cfaf073-7f40-5328-b107-73bfca4a4c2e

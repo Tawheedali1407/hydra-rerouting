@@ -1,0 +1,29 @@
+{
+  "name": "hydra-rerouting",
+  "version": "1.0.0",
+  "description": "Hydra Rerouting - SAP CAP OData service and UI for autonomous disruption rerouting",
+  "private": true,
+  "scripts": {
+    "start": "cds-serve",
+    "watch": "cds watch"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@sap/cds": "^10",
+    "@cap-js/sqlite": "^3",
+    "express": "^4"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": {
+          "url": ":memory:"
+        }
+      },
+      "auth": "dummy"
+    }
+  }
+}

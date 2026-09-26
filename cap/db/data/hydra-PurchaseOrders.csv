@@ -1,0 +1,15 @@
+PurchaseOrder;PurchaseOrderItem;Material;MaterialText;Quantity;Unit;Plant;Supplier;Asset_ID;DueOffsetHours;NetValue;Currency;SLATier
+4500018231;10;MAT-HV-2210;Hydraulic valve blocks;1200;EA;NL01;Deccan Precision Castings;KB;430;412800;EUR;Gold
+4500018244;20;MAT-TX-0081;Cotton denim rolls;36000;M;DE02;Sahyadri Textiles;KB;470;198400;EUR;Silver
+4500018259;10;MAT-PH-7710;API intermediates (GMP);4.2;T;BE01;Nilgiri Pharma Ingredients;KB;420;1086000;EUR;Gold
+4500018262;30;MAT-CI-3302;Cast-iron pump housings;640;EA;NL01;Deccan Precision Castings;KB;600;151300;EUR;Bronze
+4500018410;10;MAT-EL-2231;Semiconductor test boards;2400;EA;IN05;Straits Microsystems;OC;60;24000000;INR;Gold
+4500018415;10;MAT-CH-0917;Specialty resins;18;T;IN05;Malacca Polymers;OC;72;8600000;INR;Silver
+4500018301;10;MAT-WT-0901;Wind-turbine gearboxes;4;EA;IN03;Hooghly Heavy Engineering;AS;48;72000000;INR;Gold
+4500018307;20;MAT-HE-5520;Excavator undercarriages;12;EA;IN03;Hooghly Heavy Engineering;AS;60;31000000;INR;Silver
+4500018520;10;MAT-PL-4410;Polymer granules;900;T;AE01;Kutch Petrochem;SV;80;54000000;INR;Silver
+4500019102;10;MAT-EL-1120;PCB assemblies;8000;EA;IN01;Coromandel Electronics;TR1;8;3840000;INR;Gold
+4500019117;10;MAT-EL-4471;Li-ion cells 21700;24000;EA;IN01;Coromandel Electronics;TR2;10;6190000;INR;Gold
+4500019205;10;MAT-CU-1100;Copper cathodes;22;T;IN01;Karavali Metals;TR3;9;19000000;INR;Silver
+4500019211;10;MAT-BR-0620;Spherical roller bearings;1500;EA;IN01;Karavali Metals;TR3;8.5;4400000;INR;Gold
+4500019121;20;MAT-AL-0310;Aluminium enclosures;3500;EA;IN01;Hosur Diecast Works;TR4;12;980000;INR;Bronze
