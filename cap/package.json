@@ -6,10 +6,11 @@
   "scripts": {
     "start": "cds-serve",
     "watch": "cds watch",
-    "test": "node --test test/api.test.js test/aicore-fallback.test.js",
+    "test": "node --test test/api.test.js test/aicore-fallback.test.js test/team-auth.test.js",
     "test:e2e": "node --test test/e2e.test.mjs",
     "sync-ui": "cp ../index.html ../rerouting-rules.js ../leaflet.js app/",
-    "build:hana": "cds build --production --profile hana"
+    "build:hana": "cds build --production --profile hana",
+    "hash-password": "node ../tools/hash-password.js"
   },
   "engines": {
     "node": ">=20"

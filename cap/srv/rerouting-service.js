@@ -54,7 +54,7 @@ function info() {
   return {
     version: require('../package.json').version, startedAt: STARTED, anchoredAt,
     db: db.kind === 'hana' ? 'hana (SAP HANA Cloud, HDI container)' : `${db.kind}${db.credentials?.url === ':memory:' ? ' (in-memory)' : ''}`,
-    messaging: msg.kind || 'none', auth: cds.env.requires.auth?.kind || String(cds.env.requires.auth), classifier: rules.VERSION,
+    messaging: msg.kind || 'none', auth: process.env.TEAM_USERS ? 'team login (HTTP Basic over HTTPS)' : (cds.env.requires.auth?.kind || String(cds.env.requires.auth)), classifier: rules.VERSION,
     aiCore: aiCore.status(),
     runtime: process.env.VCAP_APPLICATION ? `SAP BTP Cloud Foundry · ${JSON.parse(process.env.VCAP_APPLICATION).application_name}` : 'local'
   };
@@ -123,7 +123,7 @@ module.exports = class ReroutingService extends cds.ApplicationService {
     // Agent 5 · dispatch: all writes succeed or none do (CAP wraps the handler in one transaction)
     this.on('dispatchPlan', async req => {
       const { incident = {}, updates = [], source, orders = [] } = req.data;
-      const src = String(source || 'Dispatch agent').slice(0, 80);
+      const who = req.headers?.['x-team-user']; const src = (String(source || 'Dispatch agent') + (who ? ` · by ${who}` : '')).slice(0, 80);
       if (!incident.title) return req.error(400, 'incident.title is required');
       let changes = 0;
       for (const u of updates) {
