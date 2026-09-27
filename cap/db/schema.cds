@@ -73,3 +73,10 @@ entity EventStats {
   Raw       : Integer;
   Forwarded : Integer;
 }
+
+/** Business events published by the dispatch agent over CAP messaging (local broker in the demo, SAP Event Mesh in production). */
+entity EventLog : cuid {
+  at      : Timestamp;
+  topic   : String(80);
+  payload : LargeString;
+}

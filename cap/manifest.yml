@@ -6,3 +6,8 @@ applications:
     buildpacks: [nodejs_buildpack]
     command: npm start
     random-route: true
+    health-check-type: http
+    health-check-http-endpoint: /health
+    env:
+      # Origins allowed to call the API from another site (comma-separated, "*" for any).
+      HYDRA_CORS_ORIGINS: https://tawheedali1407.github.io

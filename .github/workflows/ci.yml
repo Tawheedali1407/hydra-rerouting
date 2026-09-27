@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cap
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cap/package-lock.json
+      - run: npm ci
+      - name: UI copy served by CAP matches the repo root
+        run: npm run sync-ui && git diff --exit-code -- app/
+      - name: API tests (production profile)
+        run: npm test
+      - name: Browser end-to-end tests
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-screenshots
+          path: cap/test/screenshots/

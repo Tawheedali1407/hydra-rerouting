@@ -1,0 +1,58 @@
+name: Deploy to SAP BTP
+
+# Pushes the CAP app (UI + OData service) to Cloud Foundry on your BTP trial.
+# One-time setup: repo Settings → Secrets and variables → Actions → add
+#   CF_API       e.g. https://api.cf.us10-001.hana.ondemand.com (BTP cockpit → subaccount overview)
+#   CF_USERNAME  your SAP ID e-mail
+#   CF_PASSWORD  your SAP ID password (accounts with 2FA cannot log in non-interactively)
+#   CF_ORG       the org name shown in the subaccount overview
+#   CF_SPACE     usually "dev"
+# Then run it from the Actions tab (Run workflow). It also runs on pushes to main once the secrets exist.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['cap/**', 'index.html', 'hydra-rules.js', 'leaflet.js']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CF_API: ${{ secrets.CF_API }}
+      CF_USERNAME: ${{ secrets.CF_USERNAME }}
+      CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+      CF_ORG: ${{ secrets.CF_ORG }}
+      CF_SPACE: ${{ secrets.CF_SPACE }}
+    steps:
+      - name: Check secrets
+        id: ok
+        run: |
+          if [ -z "$CF_API" ] || [ -z "$CF_USERNAME" ] || [ -z "$CF_PASSWORD" ] || [ -z "$CF_ORG" ] || [ -z "$CF_SPACE" ]; then
+            echo "BTP secrets not set; skipping deploy. See the comment at the top of this workflow."; echo "go=false" >> "$GITHUB_OUTPUT"
+          else echo "go=true" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/checkout@v4
+        if: steps.ok.outputs.go == 'true'
+      - name: Install Cloud Foundry CLI
+        if: steps.ok.outputs.go == 'true'
+        run: |
+          curl -sSL "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8&source=github" | tar -zx cf8
+          sudo mv cf8 /usr/local/bin/cf && cf version
+      - name: Sync UI into the CAP app
+        if: steps.ok.outputs.go == 'true'
+        run: cp index.html hydra-rules.js leaflet.js cap/app/
+      - name: Push
+        if: steps.ok.outputs.go == 'true'
+        working-directory: cap
+        run: |
+          cf api "$CF_API"
+          cf auth
+          cf target -o "$CF_ORG" -s "$CF_SPACE"
+          cf push
+      - name: Smoke test
+        if: steps.ok.outputs.go == 'true'
+        run: |
+          ROUTE=$(cf curl "/v3/apps?names=hydra-rerouting" | python3 -c "import sys,json;print(json.load(sys.stdin)['resources'][0]['guid'])" | xargs -I{} cf curl "/v3/apps/{}/routes" | python3 -c "import sys,json;print(json.load(sys.stdin)['resources'][0]['url'])")
+          echo "App URL: https://$ROUTE"
+          curl -fsS "https://$ROUTE/odata/v4/hydra/info()"
+          echo "### Hydra is live: https://$ROUTE" >> "$GITHUB_STEP_SUMMARY"
