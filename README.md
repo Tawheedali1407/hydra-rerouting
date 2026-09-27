@@ -46,6 +46,17 @@ npm start          # http://localhost:4004 → UI + API, top bar shows "SAP CAP 
    `cf deploy mta_archives/sap-rerouting_2.0.0.mtar -e mta-aicore.mtaext`.
 6. Open the app route. Cockpit → **Run self-test**, and `…/odata/v4/rerouting/info()` shows `db: hana…` and `aiCore: bound…`.
 
+### Team-only access (do this before sharing the link)
+Every page and API call asks for a team login once `TEAM_USERS` is set; only `/health` stays open for Cloud Foundry.
+Each teammate opens the BTP app URL on their own laptop or phone and signs in with their own name and password.
+```bash
+# one entry per teammate: name:password  (or name:sha256:<hash> from `npm run hash-password -- <name> <password>`)
+cf set-env sap-rerouting-srv TEAM_USERS 'ali:<password>,teammate2:<password>,teammate3:<password>,teammate4:<password>'
+cf restage sap-rerouting-srv
+```
+The app name is `sap-rerouting-srv` for the MTA deploy, `sap-rerouting` for `cf push`. Approvals are logged with the teammate's name.
+Production path: XSUAA with SAP ID logins and role collections.
+
 ### SAP BTP without HANA (fallback)
 Option A, GitHub Actions: add the secrets `CF_API`, `CF_USERNAME`, `CF_PASSWORD`, `CF_ORG`, `CF_SPACE`
 (Settings → Secrets and variables → Actions), then **Actions → Deploy to SAP BTP → Run workflow**. The run summary prints the app URL.
