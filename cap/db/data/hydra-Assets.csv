@@ -1,9 +1,0 @@
-ID;name;type;info;lat;lon;heading;routeSet;baseEtaHours;destination
-KB;MV Kestrel Bay;VESSEL;Container 8,500 TEU · Nhava Sheva → Rotterdam;15.9;64.5;250;KB;370;Rotterdam
-OC;MV Orion Crest;VESSEL;Container 4,200 TEU · Singapore → Colombo → Kochi;5.9;88.0;268;OC;36;Kochi
-AS;MV Astraia;VESSEL;Ro-Ro · Haldia → Chennai · 21 crew;15.4;82.6;225;AS;20;Chennai
-SV;MT Sagar Veer;VESSEL;Tanker · Mundra → Jebel Ali;21.9;66.0;285;SV;58;Jebel Ali
-TR1;TN-09-AX-4411;TRUCK;PCB assemblies · Chennai → Bengaluru;13.05;80.1;0;CHN;6.2;Bengaluru
-TR2;TN-22-BQ-0917;TRUCK;Li-ion cells · Chennai → Bengaluru;12.97;79.95;0;CHN;5.8;Bengaluru
-TR3;KA-19-AB-5521;TRUCK;Copper cathodes · Mangaluru → Bengaluru;12.9;74.95;0;MNG;7.3;Bengaluru
-TR4;KA-01-MC-2210;TRUCK;Enclosures · Hosur → Bengaluru;12.74;77.83;0;HSR;1.2;Bengaluru

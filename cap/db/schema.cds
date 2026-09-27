@@ -1,7 +1,7 @@
-namespace hydra;
+namespace rerouting;
 using { cuid, managed } from '@sap/cds/common';
 
-/** Vessels, trucks and rescue units tracked by Hydra (AIS / GPS). */
+/** Vessels, trucks and rescue units tracked by SAP Rerouting (AIS / GPS). */
 entity Assets {
   key ID          : String(10);
   name            : String(60);
@@ -13,10 +13,11 @@ entity Assets {
   routeSet        : String(10);   // route catalogue key (SAP TM freight lane)
   baseEtaHours    : Decimal(8,2);
   destination     : String(40);
+  captain         : String(60);   // master or driver who receives reroute orders on deck
   orders          : Association to many PurchaseOrders on orders.Asset = $self;
 }
 
-/** Mirrors S/4HANA A_PurchaseOrderItem + schedule line fields Hydra needs. */
+/** Mirrors S/4HANA A_PurchaseOrderItem + schedule line fields the agents need. */
 entity PurchaseOrders : managed {
   key PurchaseOrder     : String(10);
   key PurchaseOrderItem : String(5);
@@ -79,4 +80,16 @@ entity EventLog : cuid {
   at      : Timestamp;
   topic   : String(80);
   payload : LargeString;
+}
+
+/** Reroute orders sent from the Command Center to the captain or driver on deck, and their replies. */
+entity Dispatches : cuid, managed {
+  incidentCode : String(20);
+  asset        : Association to Assets;
+  routeName    : String(80);
+  instruction  : String(300);
+  newEta       : Timestamp;
+  status       : String(12) default 'Sent';   // Sent | Accepted | Problem
+  reply        : String(300);
+  repliedAt    : Timestamp;
 }

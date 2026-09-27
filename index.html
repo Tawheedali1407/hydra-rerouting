@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Hydra Rerouting</title>
+<title>SAP Rerouting</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -948,6 +948,43 @@ button.pill:hover{border-color:var(--gold2)}button.pill:focus-visible{outline:2p
 .checks .ms{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
 .truthkey{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- finale: alerts, two menus, crew deck, screen fitting ---- */
+.alertbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 24px;background:#C62828;color:#fff;font-weight:600;font-size:13.5px;animation:abflash 1.2s ease-in-out 3}
+.alertbar .btn{background:#fff;color:#C62828;border-color:#fff;padding:4px 10px;font-size:12px}
+.alertbar .btn.ghost{background:transparent;color:#fff}
+.alertbar .grow{flex:1;min-width:180px}
+@keyframes abflash{50%{background:#8E1B1B}}
+.pill.bell{cursor:pointer;background:#fff;font:inherit;font-size:12px}
+.pill.bell.hot{border-color:var(--crit);color:#C62828;animation:pulse 1.6s infinite}
+.kpi.hot{border-color:rgba(229,72,77,.6);box-shadow:0 0 0 3px rgba(229,72,77,.15)}
+.modesw{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:12px 12px 0;padding:4px;background:rgba(0,0,0,.18);border-radius:10px}
+.modesw button{all:unset;cursor:pointer;text-align:center;padding:8px 6px;border-radius:7px;font-size:12.5px;color:rgba(255,255,255,.85)}
+.modesw button.on{background:#fff;color:#0F4F85;font-weight:600}
+.modesw button:focus-visible{outline:2px solid #fff}
+.al{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 11px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;background:var(--n1)}
+.al.crit{border-color:rgba(229,72,77,.55);background:rgba(229,72,77,.06)}
+.al .when{font:11px var(--mono);color:var(--dim)}
+.deckbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.deckbar select{min-width:min(320px,100%)}
+.deckgrid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:16px;align-items:start}
+.phone{border:10px solid #0E2A47;border-radius:30px;background:#fff;overflow:hidden;box-shadow:var(--shadow);max-width:420px;width:100%}
+.phead{display:flex;justify-content:space-between;background:#0E2A47;color:#fff;padding:8px 14px 10px;font-size:12.5px;font-weight:600}
+.pbody{padding:14px;min-height:420px;display:flex;flex-direction:column;gap:12px}
+.order{border:2px solid var(--gold);border-radius:12px;padding:14px;background:linear-gradient(180deg,rgba(25,181,254,.08),transparent)}
+.order.new{animation:neword 1s ease-in-out 3}
+@keyframes neword{50%{border-color:var(--crit);box-shadow:0 0 0 6px rgba(229,72,77,.18)}}
+.order h2{font-family:var(--serif);font-size:19px;margin:4px 0 8px;line-height:1.25}
+.order .big{display:flex;gap:10px;margin-top:12px}
+.order .big .btn{flex:1;padding:12px;font-size:14px;text-align:center}
+.calm{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;min-height:300px;color:var(--muted)}
+.calm .ic{font-size:42px}
+body.deckmode #resetBtn,body.deckmode .top .search,body.deckmode #statusPill,body.deckmode #bellBtn{display:none}
+@media (max-width:1100px){.deckgrid{grid-template-columns:minmax(0,1fr)}.phone{margin:0 auto}}
+@media (max-width:820px){.alertbar{padding:9px 16px}}
+@media (max-height:820px) and (min-width:821px){.mapslot{height:calc(100vh - 190px);min-height:320px}.kpi .v{font-size:23px}.scroll{padding-block:14px 32px}}
+@media (min-width:1700px){body{font-size:15px}.scroll{padding-inline:32px}}
+@media (max-width:480px){.top{gap:8px}.top h1{font-size:16px}#statusPill,#dataPill{font-size:11px;padding:3px 8px}.kpi .v{font-size:22px}.panel{padding:14px}.g4,.g5{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#resetBtn{padding:5px 9px;font-size:12px}}
+
 </style>
 
 </head>
@@ -955,14 +992,16 @@ button.pill:hover{border-color:var(--gold2)}button.pill:focus-visible{outline:2p
 <div class="app">
   <div class="scrim" id="scrim" hidden></div>
   <aside class="side" id="drawer" aria-label="Menu" aria-hidden="true">
-    <div class="dhead"><div class="brand"><div class="mark" id="appName">Hydra <span>Rerouting</span></div><div class="sub" id="brandSub">SAP BTP prototype</div></div><button class="xbtn" id="closeMenu" aria-label="Close menu"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div class="dhead"><div class="brand"><div class="mark" id="appName">SAP <span>Rerouting</span></div><div class="sub" id="brandSub">SAP BTP prototype</div></div><button class="xbtn" id="closeMenu" aria-label="Close menu"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div class="modesw" role="tablist" aria-label="Menu"><button data-mode="cc" class="on" role="tab">🖥️ Command Center</button><button data-mode="deck" role="tab">🚢 Captain / Driver</button></div>
     <nav class="nav" id="nav" aria-label="Sections"></nav>
     <div class="foot"><span id="teamName">Team Hydra</span><br>SAP Hackathon finale prototype<br><span id="footSrc">Demo data</span></div>
   </aside>
   <main>
+    <div class="alertbar" id="alertBar" hidden role="alert"></div>
     <header class="top">
       <button class="menuBtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Menu<span class="badge" id="menuBadge" hidden>1</span></button>
-      <div class="logo"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M3 19c4-9 8-9 10-4s6 5 10-4" fill="none" stroke="#1769AA" stroke-width="3" stroke-linecap="round"/><path d="M3 12c4-7 8-7 10-3" fill="none" stroke="#19B5FE" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="11" r="2.6" fill="#E7A928"/></svg><span style="color:var(--navy);font-weight:600">Hydra</span><span id="logoSub">Rerouting</span></div>
+      <div class="logo"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M3 19c4-9 8-9 10-4s6 5 10-4" fill="none" stroke="#1769AA" stroke-width="3" stroke-linecap="round"/><path d="M3 12c4-7 8-7 10-3" fill="none" stroke="#19B5FE" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="11" r="2.6" fill="#E7A928"/></svg><span style="color:var(--navy);font-weight:600">SAP</span><span id="logoSub">Rerouting</span></div>
       <div class="vsep"></div>
       <div class="ttl"><div class="crumb" id="crumb">Command Center</div><h1 id="secTitle">Operations overview</h1></div>
       <div class="search" role="search">
@@ -972,6 +1011,7 @@ button.pill:hover{border-color:var(--gold2)}button.pill:focus-visible{outline:2p
         <div class="sres" id="sres" hidden></div>
       </div>
       <button class="pill" id="dataPill" title="Where the data comes from. Click to connect a backend." aria-haspopup="dialog" aria-controls="conn"><span class="dot warn"></span><span>Connecting…</span></button>
+      <button class="pill bell" id="bellBtn" title="Alerts"><span aria-hidden="true">🔔</span><span id="bellN">0</span></button>
       <span class="pill" id="statusPill"><span class="dot"></span><span>All corridors nominal</span></span>
       <span class="clock" id="clock">--:--:-- IST</span>
       <button class="btn ghost" id="resetBtn">Reset incident</button>
@@ -1007,7 +1047,7 @@ key = <span class="s">"evt:"</span> + sha1(type|geo_cell|window)
       </section>
 
       <section class="sec" id="s-classify" data-title="Event classification" data-crumb="02 · Analyze">
-        <p class="lede">Each forwarded event gets a <b>type, severity, location and confidence</b>. Below 0.70 confidence it waits for a second source. Today this is a <b>rule engine</b> (keywords and a gazetteer) that runs as the CAP <b>classify</b> function; the planned upgrade is an LLM on <b>SAP AI Core · Generative AI Hub</b> behind the same output contract.</p>
+        <p class="lede">Each forwarded event gets a <b>type, severity, location and confidence</b>. Below 0.70 confidence it waits for a second source. The CAP <b>classify</b> function calls an LLM on <b>SAP AI Core · Generative AI Hub</b> when the AI Core service is bound, and falls back to a <b>rule engine</b> (keywords and a gazetteer) otherwise. The badge on the output says which one answered.</p>
         <div class="grid g2">
           <div class="panel"><h3>Try the classifier</h3>
             <label for="clsIn" class="note">Paste any alert text.</label>
@@ -1060,7 +1100,7 @@ key = <span class="s">"evt:"</span> + sha1(type|geo_cell|window)
       </section>
 
       <section class="sec" id="s-investigate" data-title="Investigate a new scenario" data-crumb="Operations">
-        <p class="lede">Describe a disruption and <b>click the map</b> to place it. Hydra checks every tracked route against the zone and shows the affected shipments, orders and best alternative.</p>
+        <p class="lede">Describe a disruption and <b>click the map</b> to place it. SAP Rerouting checks every tracked route against the zone and shows the affected shipments, orders and best alternative.</p>
         <div class="split">
           <div class="mapslot" data-map="investigate"></div>
           <div class="stack">
@@ -1110,7 +1150,7 @@ key = <span class="s">"evt:"</span> + sha1(type|geo_cell|window)
       </section>
 
       <section class="sec" id="s-history" data-title="History" data-crumb="Operations">
-        <p class="lede">Past incidents, every change Hydra made to a purchase order, and daily sensing volumes. Stored in the <b>SAP CAP</b> service as Incidents, OrderHistory, EventLog and EventStats.</p>
+        <p class="lede">Past incidents, every change the agents made to a purchase order, and daily sensing volumes. Stored in the <b>SAP CAP</b> service as Incidents, OrderHistory, EventLog and EventStats.</p>
         <div><div class="seg" id="histSeg" role="tablist"><button data-h="inc" class="on">Incidents</button><button data-h="po">PO changes</button><button data-h="ev">Business events</button><button data-h="data">Event data</button></div></div>
         <div id="h-inc" class="stack">
           <div class="grid g4" id="histKpis"></div>
@@ -1118,14 +1158,42 @@ key = <span class="s">"evt:"</span> + sha1(type|geo_cell|window)
           <div class="panel"><h3>Incident log</h3><div class="tw" id="incTable"></div></div>
         </div>
         <div id="h-po" class="stack" hidden><div class="panel"><h3>Purchase order change log <span class="r" id="poHistCount"></span></h3><div class="tw" id="poHist"></div></div></div>
-        <div id="h-ev" class="stack" hidden><div class="panel"><h3>Published business events <span class="r" id="evLogCount"></span></h3><p class="note" style="margin:0 0 10px">Every approved plan publishes <span class="mono">hydra/reroute/v1/approved</span> through CAP messaging. A subscriber in the service records what it received here. Demo broker: local (in-process); production: SAP Event Mesh.</p><div class="tw" id="evLog"></div></div></div>
+        <div id="h-ev" class="stack" hidden><div class="panel"><h3>Published business events <span class="r" id="evLogCount"></span></h3><p class="note" style="margin:0 0 10px">Every approved plan publishes <span class="mono">rerouting/reroute/v1/approved</span> through CAP messaging. A subscriber in the service records what it received here. Demo broker: local (in-process); production: SAP Event Mesh.</p><div class="tw" id="evLog"></div></div></div>
         <div id="h-data" class="stack" hidden>
           <div class="panel"><h3>Events per day <span class="tag sim">Sample data</span><span class="r">last 7 days</span></h3><div id="evChart"></div></div>
           <div class="panel"><h3>By source <span class="r">7-day totals</span></h3><div class="tw" id="evTable"></div></div>
         </div>
       </section>
 
+      <section class="sec" id="s-deck" data-title="My assignment" data-crumb="Captain / Driver on deck">
+        <div class="deckbar"><label for="deckWho" class="note">I am</label><select id="deckWho"></select><span class="pill" id="deckConn"><span class="dot gold"></span><span>demo</span></span></div>
+        <div class="deckgrid">
+          <div class="phone"><div class="phead"><span id="pTitle">—</span><span id="pClock" class="mono"></span></div><div class="pbody" id="deckMain"></div></div>
+          <div class="stack">
+            <div class="panel"><h3>My vehicle</h3><dl class="kv" id="deckKv"></dl></div>
+            <div class="panel"><h3>How this works</h3><p class="lede" style="font-size:12.5px">When the Command Center approves a reroute, the order arrives here within seconds. <b>Accept</b> it or report a <b>problem</b>; your answer goes back to the operator and is stored in the CAP service (<span class="mono">Dispatches</span>).</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="s-deckorders" data-title="My orders" data-crumb="Captain / Driver on deck">
+        <div class="panel"><h3>Reroute orders for this vehicle <span class="r" id="deckOrdN"></span></h3><div id="deckOrders"></div></div>
+      </section>
+
+      <section class="sec" id="s-deckreport" data-title="Report an issue" data-crumb="Captain / Driver on deck">
+        <div class="deckgrid">
+          <div class="panel"><h3>What is happening where you are?</h3>
+            <textarea id="repText" placeholder="e.g. Water over the road at the Palar bridge, cannot pass">Water over the road near the Palar bridge at Ambur, police stopping trucks.</textarea>
+            <div class="chips" id="repChips" style="margin-top:8px"></div>
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn gold" id="repSend">Send to Command Center</button><span class="note" id="repNote"></span></div>
+          </div>
+          <div class="panel"><h3>Last report</h3><div id="repOut"><div class="empty">Nothing sent yet.</div></div></div>
+        </div>
+      </section>
+
       <section class="sec" id="s-cockpit" data-title="Resilience cockpit" data-crumb="Platform">
+        <div class="panel" id="alertsPanel"><h3>Active alerts <span class="tag live">Real events</span><span class="r" id="alertCount">0 open</span></h3><div id="alertList"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn sm" id="sndBtn">🔔 Sound + desktop alerts: off</button><button class="btn sm" id="testAlert">Send test alert</button></div></div>
         <div class="panel"><h3>Live backend check <span class="tag live" id="stTag">real calls</span><span class="r" id="stWhen"></span></h3>
           <p class="note" style="margin:0 0 10px" id="stNote">Runs real requests against the connected CAP service and times them. Nothing is written.</p>
           <div class="checks" id="stOut"></div>
@@ -1154,7 +1222,7 @@ key = <span class="s">"evt:"</span> + sha1(type|geo_cell|window)
         </div>
         <div class="grid g2">
           <div class="panel"><h3>What is real in this prototype</h3><div class="tw" id="sapMap"></div></div>
-          <div class="panel"><h3>CAP data model <span class="r">/odata/v4/hydra</span></h3><div class="tw" id="capMap"></div></div>
+          <div class="panel"><h3>CAP data model <span class="r">/odata/v4/rerouting</span></h3><div class="tw" id="capMap"></div></div>
         </div>
         <div class="panel"><h3>Risks and safeguards</h3><div class="tw" id="gov"></div></div>
       </section>
@@ -1166,7 +1234,7 @@ key = <span class="s">"evt:"</span> + sha1(type|geo_cell|window)
   <h3>Backend connection</h3>
   <div id="connState" class="note"></div>
   <label for="connUrl" class="note">CAP service URL (the app route from <span class="mono">cf push</span>, or the full OData path)</label>
-  <input class="inp" id="connUrl" placeholder="https://hydra-rerouting-xxxx.cfapps.us10-001.hana.ondemand.com" autocomplete="off" spellcheck="false">
+  <input class="inp" id="connUrl" placeholder="https://sap-rerouting-xxxx.cfapps.us10-001.hana.ondemand.com" autocomplete="off" spellcheck="false">
   <div class="err" id="connErr" aria-live="polite"></div>
   <div class="row"><button class="btn gold" id="connGo">Test and connect</button><button class="btn" id="connDemo">Use demo data</button><button class="btn danger" id="connReset" hidden>Reset demo data on server</button></div>
   <p class="note" style="margin:0">Tip: share a link with <code>?api=&lt;url&gt;</code> to open the app already connected.</p>
@@ -1175,14 +1243,14 @@ key = <span class="s">"evt:"</span> + sha1(type|geo_cell|window)
 <div class="ctip" id="ctip" hidden></div>
 
 <script src="leaflet.js"></script>
-<script src="hydra-rules.js"></script>
+<script src="rerouting-rules.js"></script>
 <script>
 /* ================= CONFIG: edit names here ================= */
-const CFG = { app: 'Hydra', sub: 'Rerouting', team: 'Team Hydra', api: '/odata/v4/hydra' };
+const CFG = { app: 'SAP', sub: 'Rerouting', team: 'Team Hydra', api: '/odata/v4/rerouting', workzone: false, poll: 4000 };
 /* Backend URL, in order: ?api=<url> (remembered), a saved choice, else same origin (when the CAP service serves this page).
-   ?api=demo forces demo data. The CAP service must allow this page's origin (see cap/server.js, HYDRA_CORS_ORIGINS). */
-const API_KEY = 'hydra.api';
-function normApi(u){ u = String(u||'').trim().replace(/\/+$/,''); if (!u || u==='demo' || u.startsWith('/')) return u; if (!/^https?:\/\//.test(u)) u = 'https://' + u; if (!/\/odata\/v4\/hydra$/.test(u)) u += '/odata/v4/hydra'; return u; }
+   ?api=demo forces demo data. The CAP service must allow this page's origin (see cap/server.js, CORS_ORIGINS). */
+const API_KEY = 'rerouting.api';
+function normApi(u){ u = String(u||'').trim().replace(/\/+$/,''); if (!u || u==='demo' || u.startsWith('/')) return u; if (!/^https?:\/\//.test(u)) u = 'https://' + u; if (!/\/odata\/v4\/rerouting$/.test(u)) u += '/odata/v4/rerouting'; return u; }
 (function(){ let q = null, saved = null; try { q = new URLSearchParams(location.search).get('api'); } catch(e){}
   try { if (q != null) localStorage.setItem(API_KEY, normApi(q)); saved = localStorage.getItem(API_KEY); } catch(e){ saved = q != null ? normApi(q) : null; }
   if (saved) CFG.api = saved; })();
@@ -1208,7 +1276,7 @@ function money(v, cur){
 }
 const PLANTS = { IN01:'Bengaluru', IN02:'Hosur', IN03:'Chennai', IN05:'Kochi', NL01:'Rotterdam DC', DE02:'Hamburg DC', BE01:'Antwerp', AE01:'Jebel Ali' };
 const TOL = { Gold:0, Silver:12, Bronze:48 };
-const store = { get(){ try { return JSON.parse(localStorage.getItem('hydra.v1') || '{}'); } catch(e){ return {}; } }, set(v){ try { localStorage.setItem('hydra.v1', JSON.stringify(v)); } catch(e){} } };
+const store = { get(){ try { return JSON.parse(localStorage.getItem('rerouting.v1') || '{}'); } catch(e){ return {}; } }, set(v){ try { localStorage.setItem('rerouting.v1', JSON.stringify(v)); } catch(e){} } };
 
 /* ================= ROUTE CATALOGUE (SAP TM freight lanes) ================= */
 const SUEZ_TAIL = [[12.3,46.5],[12.55,43.6],[14.6,42.3],[20,38.4],[24.5,36.2],[27.6,33.9],[29.9,32.57],[31.3,32.33],[33.2,28.5],[34.6,22.5],[36.9,13.2],[37.4,11.3],[37.6,9],[37.2,3],[36.0,-4.6],[35.95,-5.9],[36.8,-9.4],[42.5,-9.9],[46.5,-7.5],[48.6,-5.4],[49.9,-2.5],[50.8,0.8],[51.4,2.6],[51.95,4.05]];
@@ -1269,9 +1337,10 @@ const SCN = {
 const where = c => `${Math.abs(c[0]).toFixed(2)}°${c[0]>=0?'N':'S'} ${Math.abs(c[1]).toFixed(2)}°${c[1]>=0?'E':'W'}`;
 
 /* ================= DATA LAYER (SAP CAP OData v4, falls back to seed) ================= */
-const DB = { assets:[], pos:[], incidents:[], history:[], events:[], evlog:[], live:false, info:null, latency:null, connErr:null };
+const DB = { assets:[], pos:[], incidents:[], history:[], events:[], evlog:[], dispatches:[], live:false, info:null, latency:null, connErr:null };
 const nPO = p => ({ ...p, Quantity:+p.Quantity, NetValue:+p.NetValue, DeliveryDate: p.DeliveryDate ? Date.parse(p.DeliveryDate) : null, ConfirmedDelivery: p.ConfirmedDelivery ? Date.parse(p.ConfirmedDelivery) : null });
-const nAsset = a => ({ ...a, lat:+a.lat, lon:+a.lon, heading:+a.heading, baseEtaHours:+a.baseEtaHours, etaAt: LOAD + (+a.baseEtaHours)*H, plan:null });
+const CAPT = { KB:'Capt. R. Menon', OC:'Capt. S. Fernando', AS:'Capt. A. Das', SV:'Capt. K. Patel', TR1:'Driver Murugan K', TR2:'Driver Selvam P', TR3:'Driver Naveen S', TR4:'Driver Ravi M' };
+const nAsset = a => ({ ...a, captain: a.captain || CAPT[a.ID] || '', lat:+a.lat, lon:+a.lon, heading:+a.heading, baseEtaHours:+a.baseEtaHours, etaAt: LOAD + (+a.baseEtaHours)*H, plan:null });
 async function api(path, opt={}, ms=8000){
   const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), ms);
   try {
@@ -1284,7 +1353,7 @@ async function api(path, opt={}, ms=8000){
 const apiHost = () => { try { return new URL(CFG.api, location.href).host; } catch(e){ return ''; } };
 const onBTP = () => DB.live && /hana\.ondemand\.com|cfapps\./.test(apiHost());
 async function loadData(){
-  const explicit = CFG.api !== '/odata/v4/hydra';
+  const explicit = CFG.api !== '/odata/v4/rerouting';
   try {
     if (CFG.api === 'demo') throw 0;
     if (!/^https?:/.test(location.protocol) && !/^https?:/.test(CFG.api)) throw 0;
@@ -1295,6 +1364,7 @@ async function loadData(){
     DB.info = inf; if (inf?.anchoredAt) LOAD = Date.parse(inf.anchoredAt);
     DB.assets = a.value.map(nAsset);
     DB.pos = p.value.map(nPO); DB.incidents = i.value; DB.history = h.value; DB.events = e.value; DB.evlog = ev.value; DB.live = true;
+    try { DB.dispatches = (await api('/Dispatches?$orderby=createdAt desc&$top=100')).value; } catch(e){ DB.dispatches = []; }
     return;
   } catch(e){ if (explicit && CFG.api !== 'demo') DB.connErr = (e && e.message) || 'not reachable'; }
   LOAD = Date.now();
@@ -1367,7 +1437,7 @@ function slaOf(po){
 function slaPreview(po, eta){ const due = po.DeliveryDate, lim = due + (TOL[po.SLATier]||0)*H; if (eta==null) return { t:'Blocked', cls:'crit' }; return eta<=due ? { t:'On track', cls:'ok' } : eta<=lim ? { t:'In tolerance', cls:'gold' } : { t:'Will breach', cls:'warn' }; }
 
 /* ================= STATE ================= */
-const S = { sec:'overview', inc:null, phase:'idle', stamps:{}, choice:{}, view:'storm', an:null, feed:[], raw:0, uniq:0, drop:0, timers:[], log:[], hlPO:null, ordF:'all', hist:'inc', draft:{ c:null, manual:false }, ivRes:null, nCustom:0 };
+const S = { mode:'cc', alerts:[], sound:false, lastEngine:null, deckWho:'TR1', seenDisp:{}, probOpen:null, sec:'overview', inc:null, phase:'idle', stamps:{}, choice:{}, view:'storm', an:null, feed:[], raw:0, uniq:0, drop:0, timers:[], log:[], hlPO:null, ordF:'all', hist:'inc', draft:{ c:null, manual:false }, ivRes:null, nCustom:0 };
 const PH = ['idle','detect','analyze','assess','approve','dispatch'];
 const phaseIdx = () => PH.indexOf(S.phase);
 
@@ -1378,7 +1448,16 @@ const SECS = [
   ['grp','Operations'],['investigate','Investigate',''],['orders','Orders & SLA',''],['history','History',''],
   ['grp','Platform'],['cockpit','Resilience Cockpit',''],['arch','Architecture',''],
 ];
-$('#nav').innerHTML = SECS.map(x => x[0]==='grp' ? `<div class="grp">${x[1]}</div>` : `<button data-s="${x[0]}"><span class="k">${x[2]}</span>${x[1]}<span class="badge" id="b-${x[0]}" hidden></span></button>`).join('');
+const DECK_SECS = [ ['grp','On deck'],['deck','My assignment','⚓'],['deckorders','My orders',''],['deckreport','Report an issue','!'] ];
+function renderNav(){
+  const list = S.mode==='deck' ? DECK_SECS : SECS;
+  $('#nav').innerHTML = list.map(x => x[0]==='grp' ? `<div class="grp">${x[1]}</div>` : `<button data-s="${x[0]}" class="${S.sec===x[0]?'on':''}"><span class="k">${x[2]}</span>${x[1]}<span class="badge" id="b-${x[0]}" hidden></span></button>`).join('');
+  $$('.modesw button').forEach(b => b.classList.toggle('on', b.dataset.mode===S.mode));
+  $('#brandSub').textContent = S.mode==='deck' ? 'Captain / Driver app' : 'SAP BTP prototype';
+}
+renderNav();
+$$('.modesw button').forEach(b => b.onclick = () => setMode(b.dataset.mode));
+function setMode(m){ S.mode = m; document.body.classList.toggle('deckmode', m==='deck'); renderNav(); go(m==='deck' ? 'deck' : 'overview'); refresh(); }
 $('#nav').addEventListener('click', e => { const b = e.target.closest('button[data-s]'); if (b) { go(b.dataset.s); menu(false); } });
 function menu(open){ const d = $('#drawer'); d.classList.toggle('open', open); d.setAttribute('aria-hidden', String(!open)); $('#scrim').hidden = !open; $('#menuBtn').setAttribute('aria-expanded', String(open)); if (open) setTimeout(() => ($('.nav button.on')||$('.nav button')).focus(), 60); }
 $('#menuBtn').onclick = () => menu(!$('#drawer').classList.contains('open'));
@@ -1387,6 +1466,7 @@ $('#scrim').onclick = () => menu(false);
 document.addEventListener('keydown', e => { if (e.key==='Escape' && $('#drawer').classList.contains('open')) { menu(false); $('#menuBtn').focus(); } });
 function go(id){
   S.sec = id;
+  const deckSec = /^deck/.test(id); if ((S.mode==='deck') !== deckSec) { S.mode = deckSec ? 'deck' : 'cc'; document.body.classList.toggle('deckmode', deckSec); renderNav(); }
   $$('.nav button').forEach(b => b.classList.toggle('on', b.dataset.s===id));
   $$('section.sec').forEach(s => s.classList.toggle('on', s.id==='s-'+id));
   const sec = $('#s-'+id); $('#secTitle').textContent = sec.dataset.title; $('#crumb').textContent = sec.dataset.crumb;
@@ -1394,7 +1474,7 @@ function go(id){
   if (slot) { slot.appendChild($('#map')); slot.classList.toggle('investigating', id==='investigate'); $('#maphint').hidden = id!=='investigate'; redrawMap(); setTimeout(() => { map.invalidateSize(); fitView(); }, 30); }
   $('#scroll').scrollTop = 0;
   try { history.replaceState(null,'','#'+id); } catch(e){}
-  if (id==='orders') renderOrders(); if (id==='history') renderHistory(); if (id==='arch') renderArch();
+  if (id==='orders') renderOrders(); if (id==='history') renderHistory(); if (id==='arch') renderArch(); if (deckSec) renderDeck(); if (id==='cockpit') renderAlerts();
 }
 
 /* ================= MAP ================= */
@@ -1531,6 +1611,7 @@ function run(key){
   pushEvent({ src:sc.src, txt:sc.raw, crit:true });
   at(500, () => pushEvent({ src:sc.dupSrc, txt:sc.dup, crit:true, dup:true }));
   toast(`Detected · ${sc.short}`, 'crit');
+  raise({ id:'I'+S.t0, title:`${sc.sev} · ${sc.short}`, body:sc.raw, go:'overview' });
   at(1800, () => setPhase('analyze', 23));
   at(3600, () => { S.an = analyze(key); setPhase('assess', 48); if (S.sec==='overview') fitView(); });
   at(5400, () => {
@@ -1553,11 +1634,13 @@ async function dispatch(auto){
   const stamp5 = (S.stamps[4]||55) + 24;
   const protAfter = affectedPOs.filter(p => { const u = updates.find(x => x.p === p); const s1 = slaPreview(p, u ? u.eta : p.ConfirmedDelivery); return s1.cls==='ok' || s1.cls==='gold'; }).length;
   const inc = { ID: crypto.randomUUID?.() || String(Math.random()), code:code0, title:sc.name, kind:sc.kind, mode: sc.sar?'Rescue':(an.pa?.type==='TRUCK'?'Road':'Sea'), severity:sc.sev, confidence:sc.conf, lat:sc.zone.c?.[0] ?? sc.c[0], lon:sc.zone.c?.[1] ?? sc.c[1], radiusKm: sc.zone.r ? Math.round(sc.zone.r/1000) : null, assets: an.affected.map(id=>assetById(id).name).join(', '), chosenRoute: sc.sar ? 'USV-07 + tug tow' : an.chosen.short, status: auto ? 'Auto-dispatched' : 'Mitigated', detectedAt:new Date(S.t0).toISOString(), responseSeconds:stamp5, posAffected:affectedPOs.length, posProtected:protAfter };
+  const orders = (!sc.sar && an.chosen) ? an.affected.map(id => { const a = assetById(id); return { asset_ID:id, routeName:an.chosen.short, newEta:new Date(planEta(an, a)).toISOString(),
+    instruction: a.type==='VESSEL' ? `${sc.name}. Change voyage plan: ${an.chosen.name}.` : `${sc.name}. Leave the planned road and take ${an.chosen.name}.` }; }) : [];
   let res = null;
   if (DB.live) { // one CAP action = one transaction: PO confirmations + change log + incident + business event
     try {
       const { ID:_i, ...incBody } = inc;
-      res = await api('/dispatchPlan', { method:'POST', body:JSON.stringify({ incident:incBody, source:src, updates:updates.map(u => ({ PurchaseOrder:u.p.PurchaseOrder, PurchaseOrderItem:u.p.PurchaseOrderItem, ConfirmedDelivery:new Date(u.eta).toISOString() })) }) }, 15000);
+      res = await api('/dispatchPlan', { method:'POST', body:JSON.stringify({ incident:incBody, source:src, orders, updates:updates.map(u => ({ PurchaseOrder:u.p.PurchaseOrder, PurchaseOrderItem:u.p.PurchaseOrderItem, ConfirmedDelivery:new Date(u.eta).toISOString() })) }) }, 15000);
       inc.ID = res.incident; inc.code = res.code;
     } catch(e){ dispatching = false; toast('SAP write-back failed. Nothing was changed; you can retry. ' + e.message, 'crit'); refresh(); return; }
   }
@@ -1568,16 +1651,18 @@ async function dispatch(auto){
   const K = DB.live ? 'sap' : 'sim';
   const lines = [];
   if (sc.sar) lines.push(['Safety policy: dispatch first, confirm after','ok'], ...UNITS.map(u => [`${u.name} assigned · ETA ${fmtH(dist(u.from, sc.zone.c)/1852/u.kn)}`, '', 'sim']), ['MRCC Chennai notified', '', 'sim']);
-  else lines.push([auto ? 'Auto-dispatch under safety policy' : 'Plan approved by operator','ok'], ...an.affected.map(id => [`${assetById(id).type==='VESSEL'?'Voyage instruction':'Driver app push'} → ${assetById(id).name}: ${an.chosen.short}`, '', 'sim']));
+  else lines.push([auto ? 'Auto-dispatch under safety policy' : 'Plan approved by operator','ok'], ...an.affected.map(id => [`${assetById(id).type==='VESSEL'?'Voyage instruction':'Driver order'} → ${assetById(id).captain||''} (${assetById(id).name}): ${an.chosen.short}`, '', K]));
+  if (!DB.live) orders.forEach(o => localOrder({ ...o, incidentCode:inc.code }));
+  else { try { DB.dispatches = (await api('/Dispatches?$orderby=createdAt desc&$top=100')).value; DB.dispatches.forEach(d => S.seenDisp[d.ID] ??= d.status); } catch(e){} }
   updates.forEach(u => lines.push([`PO ${u.p.PurchaseOrder}/${u.p.PurchaseOrderItem} confirmed delivery → ${fmtDT(u.eta)}`, '', K]));
   if (DB.live) {
     lines.push([`${res.changes} change document${res.changes===1?'':'s'} written to OrderHistory`, '', 'sap'], [`Event ${res.topic} published · ${String(res.eventId).slice(0,8)}`, '', 'sap']);
     try { await new Promise(r => setTimeout(r, 250)); const [h, ev] = await Promise.all([api('/OrderHistory?$orderby=at desc&$top=500'), api('/EventLog?$orderby=at desc&$top=100')]); DB.history = h.value; DB.evlog = ev.value; } catch(e){}
   } else {
     for (const u of updates) { const h = { ID: crypto.randomUUID?.() || String(Math.random()), at:new Date().toISOString(), PurchaseOrder:u.p.PurchaseOrder, PurchaseOrderItem:u.p.PurchaseOrderItem, field:'ConfirmedDelivery', oldValue:u.old?fmtLog(u.old):'', newValue:fmtLog(u.eta), source:src }; DB.history.unshift(h); persistLocal('history', h); }
-    const ev = { ID: crypto.randomUUID?.() || String(Math.random()), at:new Date().toISOString(), topic:'hydra/reroute/v1/approved', payload:JSON.stringify({ code:inc.code, title:inc.title, route:inc.chosenRoute, pos:updates.map(u=>`${u.p.PurchaseOrder}/${u.p.PurchaseOrderItem}`), simulated:true }) };
+    const ev = { ID: crypto.randomUUID?.() || String(Math.random()), at:new Date().toISOString(), topic:'rerouting/reroute/v1/approved', payload:JSON.stringify({ code:inc.code, title:inc.title, route:inc.chosenRoute, pos:updates.map(u=>`${u.p.PurchaseOrder}/${u.p.PurchaseOrderItem}`), simulated:true }) };
     DB.evlog.unshift(ev); persistLocal('evlog', ev);
-    lines.push(['Event hydra/reroute/v1/approved (demo, not published)', '', 'sim']);
+    lines.push(['Event rerouting/reroute/v1/approved (demo, not published)', '', 'sim']);
     persistLocal('incidents', inc);
   }
   DB.incidents.unshift(inc);
@@ -1605,7 +1690,7 @@ function animLoop(now){
     a.m.setLatLng(p); a.tr.setLatLngs([...a.ll.slice(0,i), p]); });
   animRaf = requestAnimationFrame(animLoop);
 }
-function resetInc(silent){ clearTimers(); DB.assets.forEach(a => a.plan = null); S.inc=null; S.phase='idle'; S.stamps={}; S.choice={}; S.log=[]; S.an=null; refresh(); renderLog(); if (!silent) toast('Reset · all corridors nominal'); }
+function resetInc(silent){ S.alerts.forEach(a => { if (/^I/.test(a.id)) a.ack = true; }); clearTimers(); DB.assets.forEach(a => a.plan = null); S.inc=null; S.phase='idle'; S.stamps={}; S.choice={}; S.log=[]; S.an=null; refresh(); renderLog(); if (!silent) toast('Reset · all corridors nominal'); }
 $('#resetBtn').onclick = () => resetInc();
 document.addEventListener('click', e => { const b = e.target.closest('[data-run]'); if (b) { run(b.dataset.run); if (S.sec!=='reroute') go('overview'); } });
 document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) go(g.dataset.go); });
@@ -1624,10 +1709,10 @@ function renderFeed(){
 function renderSrc(){ $('#srcHealth').innerHTML = [['AIS (terrestrial + satellite)',98,'ok'],['IoT container and truck sensors',96,'ok'],['IMD weather bulletins',100,'ok'],['USGS seismic',100,'ok'],['News (NLP)',91,'warn']].map(s => `<div class="meter"><div class="row"><span>${s[0]}</span><b>${s[1]}%</b></div><div class="bar"><i style="width:${s[1]}%;background:var(--${s[2]})"></i></div></div>`).join(''); }
 
 /* ================= CLASSIFIER (rule-based, in page) ================= */
-const classify = txt => HydraRules.classify(txt); // shared with the CAP service (hydra-rules.js)
+const classify = txt => ReroutingRules.classify(txt); // shared with the CAP service (rerouting-rules.js)
 async function classifyAny(txt){ // live: the CAP classify function; demo: the same rules in the page
   if (DB.live) { try { const t0 = performance.now(); const r = await api(`/classify(text=@t)?@t=${encodeURIComponent("'" + txt.replace(/'/g, "''") + "'")}`);
-      return { r:{ event_type:r.event_type, severity:r.severity, location:r.location, coordinates: r.lat!=null ? [+r.lat, +r.lon] : null, confidence:+r.confidence, action:r.action, engine:r.engine }, where:'CAP service', ms:performance.now()-t0 };
+      return { r:{ event_type:r.event_type, severity:r.severity, location:r.location, coordinates: r.lat!=null ? [+r.lat, +r.lon] : null, confidence:+r.confidence, action:r.action, engine:r.engine, ...(r.note ? { note:r.note } : {}) }, where:'CAP service', ms:performance.now()-t0 };
     } catch(e){ toast('Classifier call failed, used in-page rules: ' + e.message, 'crit'); } }
   const t0 = performance.now(); const r = classify(txt); return { r, where:'in page', ms:performance.now()-t0 };
 }
@@ -1635,8 +1720,9 @@ const sevCls = s => ({ Critical:'crit', High:'warn', Medium:'gold', Low:'ok' }[s
 async function renderCls(){
   const { r, where:w, ms } = await classifyAny($('#clsIn').value);
   $('#clsMs').textContent = `${ms.toFixed(ms < 10 ? 1 : 0)} ms · ${w}`;
-  $('#clsWhere').textContent = w === 'CAP service' ? 'CAP classify()' : 'rules in page'; $('#clsWhere').className = 'tag ' + (w === 'CAP service' ? 'live' : '');
-  $('#clsNote').textContent = w === 'CAP service' ? `Rule engine ${r.engine} running in the CAP service. No external AI service is called.` : 'Rule engine running in the page (no backend connected). No external AI service is called.';
+  const ai = /AI Core/.test(r.engine||''); S.lastEngine = w === 'CAP service' ? (r.engine||'rules') : 'rules in page';
+  $('#clsWhere').textContent = ai ? r.engine : w === 'CAP service' ? 'CAP classify() · rules' : 'rules in page'; $('#clsWhere').className = 'tag ' + (w === 'CAP service' ? 'live' : '');
+  $('#clsNote').textContent = ai ? `Answered by ${r.engine} through the CAP service.` : w === 'CAP service' ? `Rule engine ${r.engine} in the CAP service. ${r.note||''}` : 'Rule engine running in the page (no backend connected). No external AI service is called.';
   $('#clsOut').innerHTML = `<div class="grid" style="gap:12px"><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="tag gold">${r.event_type}</span><span class="tag ${sevCls(r.severity)}">${r.severity}</span><span class="tag">${esc(r.location)}</span></div>
     <div class="conf"><span class="note" style="width:74px">Confidence</span><div class="bar"><i style="width:${r.confidence*100}%;${r.confidence<0.7?'background:var(--warn)':''}"></i></div><b style="font-family:var(--mono)">${r.confidence.toFixed(2)}</b></div>
     <pre class="code">${esc(JSON.stringify(r,null,2))}</pre></div>`;
@@ -1680,7 +1766,7 @@ function renderImpact(){
       <span class="s">"ConfirmedDelivery"</span>: <span class="s">"${eta(p0.Asset_ID) ? new Date(eta(p0.Asset_ID)).toISOString().slice(0,16)+'Z' : '—'}"</span> }${rows.length>1?` <span class="c">+ ${rows.length-1} more</span>`:''} ],
   <span class="s">"incident"</span>: { … }, <span class="s">"source"</span>: <span class="s">"Dispatch agent"</span> }
 <span class="c"># One transaction: PO confirmations, OrderHistory rows,
-# Incident, and event hydra/reroute/v1/approved.
+# Incident, and event rerouting/reroute/v1/approved.
 # ${DB.live ? 'Runs against the connected CAP service.' : 'Demo mode: applied to browser data only.'}</span>` : '<span class="c"># nothing to write back</span>';
 }
 
@@ -1740,7 +1826,7 @@ $('#ordForm').addEventListener('submit', async e => {
   $('#oSubmit').disabled = true;
   try {
     let po;
-    if (DB.live) { po = await api('/PurchaseOrders', { method:'POST', headers:{ 'x-hydra-source':encodeURIComponent('Orders & SLA') }, body:JSON.stringify(body) }); DB.history = (await api('/OrderHistory?$orderby=at desc&$top=500')).value; }
+    if (DB.live) { po = await api('/PurchaseOrders', { method:'POST', headers:{ 'x-rerouting-source':encodeURIComponent('Orders & SLA') }, body:JSON.stringify(body) }); DB.history = (await api('/OrderHistory?$orderby=at desc&$top=500')).value; }
     else {
       const n = Math.max(4500019300, ...DB.pos.map(p=>+p.PurchaseOrder)) + 1;
       po = { ...body, PurchaseOrder:String(n), PurchaseOrderItem:'10' };
@@ -1891,9 +1977,11 @@ function renderArch(){
     ['Hosting', onBTP() ? 'CAP app on SAP BTP Cloud Foundry' : L1 ? `CAP app at ${esc(apiHost())}` : 'GitHub Pages (static, demo data)', onBTP() ? T.live('Live on BTP') : L1 ? T.live('Live') : T.built('Ready · cf push'), 'SAP BTP Cloud Foundry (manifest.yml)'],
     ['Data and APIs', 'SAP CAP OData v4 service, 6 entities', L1 ? T.live('Live') : T.built('Built · not connected'), 'Same service on BTP'],
     ['PO write-back', 'CAP action dispatchPlan: POs, change log, incident in one transaction', L1 ? T.live('Live · tested') : T.built('Built · tested'), 'Same action, delegating to S/4HANA'],
-    ['Classifier', `Rule engine in CAP classify()${DB.info?.classifier ? ' · '+esc(DB.info.classifier) : ''}`, L1 ? T.live('Live · rules') : T.built('Rules in page'), 'LLM on SAP AI Core, same output contract'],
+    ['Classifier', /AI Core/.test(S.lastEngine||'') ? `LLM via SAP AI Core · Generative AI Hub (${esc(S.lastEngine)}), rules as fallback` : `Rule engine in CAP classify()${DB.info?.classifier ? ' · '+esc(DB.info.classifier) : ''}; AI Core: ${esc(DB.info?.aiCore || 'not connected')}`, /AI Core/.test(S.lastEngine||'') ? T.live('Live · AI Core') : /^bound/.test(DB.info?.aiCore||'') ? T.built('AI Core bound') : L1 ? T.live('Live · rules') : T.built('Rules in page'), 'LLM on SAP AI Core (code in srv/ai-core.js, same output contract)'],
     ['Business events', 'CAP messaging, local in-process broker', L1 ? T.live('Live · local broker') : T.sim('Simulated'), 'SAP Event Mesh: change messaging kind and bind the service'],
-    ['Database', 'SQLite in memory, resets on restart', L1 ? T.live('Live') : T.sim('Browser storage'), 'SAP HANA Cloud (cds add hana)'],
+    ['Database', /hana/.test(DB.info?.db||'') ? 'SAP HANA Cloud · HDI container' : 'SQLite in memory, resets on restart', /hana/.test(DB.info?.db||'') ? T.live('Live · HANA Cloud') : L1 ? T.live('Live · SQLite') : T.sim('Browser storage'), 'SAP HANA Cloud (mta.yaml, CDS_ENV=hana)'],
+    ['Crew app', 'Captain / Driver deck: orders written by dispatchPlan, answered with reply()', L1 ? T.live('Live') : T.sim('Local only'), 'Same service; native app later'],
+    ['Launchpad', CFG.workzone ? 'Tile in SAP Build Work Zone opens this app' : 'Not set up', CFG.workzone ? T.live('Live') : T.plan('Planned'), 'SAP Build Work Zone site'],
     ['Purchase orders', 'CAP entity with S/4HANA A_PurchaseOrderItem fields, seed data', T.sim('Sample data'), 'S/4HANA API_PURCHASEORDER_PROCESS_SRV as a CAP remote service'],
     ['Freight lanes', 'Route catalogue in the page', T.sim('Sample data'), 'SAP Transportation Management'],
     ['Geofences', 'Point-in-zone checks in the page (Leaflet)', T.built('In page'), 'SAP HANA Cloud spatial'],
@@ -1958,9 +2046,9 @@ $('#connGo').onclick = async () => {
   if (!url) { $('#connErr').textContent = 'Enter the backend URL.'; return; }
   $('#connGo').disabled = true; $('#connGo').textContent = 'Testing…';
   const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 15000);
-  try { const r = await fetch(url + '/info()', { headers:{ accept:'application/json' }, signal:ctl.signal }); if (!r.ok) throw new Error('HTTP ' + r.status); const j = await r.json(); if (!j.version) throw new Error('not a Hydra service');
+  try { const r = await fetch(url + '/info()', { headers:{ accept:'application/json' }, signal:ctl.signal }); if (!r.ok) throw new Error('HTTP ' + r.status); const j = await r.json(); if (!j.version) throw new Error('not a SAP Rerouting service');
     try { localStorage.setItem(API_KEY, url); } catch(e){} reloadClean(); }
-  catch(e){ $('#connErr').textContent = `Could not connect: ${e.name==='AbortError' ? 'no answer in 15 s (a BTP trial app may be stopped; start it in the BTP cockpit)' : e.message.includes('Failed to fetch') ? 'network or CORS error. Check the URL, and that the service allows this origin (HYDRA_CORS_ORIGINS).' : e.message}`; }
+  catch(e){ $('#connErr').textContent = `Could not connect: ${e.name==='AbortError' ? 'no answer in 15 s (a BTP trial app may be stopped; start it in the BTP cockpit)' : e.message.includes('Failed to fetch') ? 'network or CORS error. Check the URL, and that the service allows this origin (CORS_ORIGINS).' : e.message}`; }
   finally { clearTimeout(tm); $('#connGo').disabled = false; $('#connGo').textContent = 'Test and connect'; }
 };
 $('#connDemo').onclick = () => { try { localStorage.setItem(API_KEY, 'demo'); } catch(e){} reloadClean(); };
@@ -1978,8 +2066,122 @@ function refresh(){
   if (S.inc && S.phase !== 'dispatch') S.an = analyze(S.inc);
   renderOverview(); renderStages(); renderTrace(); renderImpact(); renderReroute(); renderPlan(); renderFeed();
   if (S.sec==='orders') renderOrders(); if (S.sec==='history') renderHistory(); if (S.sec==='arch') renderArch();
-  const b = $('#b-approval'); b.hidden = !(S.phase==='approve' && S.an && !S.an.sc.sar && S.an.chosen); b.textContent = '1'; $('#menuBadge').hidden = b.hidden;
+  const needs = !!(S.phase==='approve' && S.an && !S.an.sc.sar && S.an.chosen); const b = $('#b-approval'); if (b) { b.hidden = !needs; b.textContent = '1'; } $('#menuBadge').hidden = !needs;
+  if (S.sec.startsWith('deck')) renderDeck(); if (S.sec==='cockpit') renderAlerts(); renderAlertBar();
   redrawMap();
+}
+
+
+/* ================= FINALE: cockpit alerts, crew deck, dispatch orders ================= */
+let audioCtx = null;
+function beep(){ if (!S.sound) return; try { audioCtx ||= new (window.AudioContext||window.webkitAudioContext)(); [0,0.25,0.5].forEach(t => { const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type='square'; o.frequency.value = 880; g.gain.value = 0.06; o.connect(g); g.connect(audioCtx.destination); o.start(audioCtx.currentTime+t); o.stop(audioCtx.currentTime+t+0.15); }); } catch(e){} }
+function raise(a){
+  a = { id: a.id || ('A'+Date.now()+Math.random()), at: Date.now(), sev:'crit', ack:false, ...a };
+  if (S.alerts.some(x => x.id===a.id)) return;
+  S.alerts.unshift(a); S.alerts = S.alerts.slice(0, 30); beep();
+  if (S.sound && 'Notification' in window && Notification.permission==='granted') { try { new Notification('SAP Rerouting · ' + a.title, { body: a.body || '' }); } catch(e){} }
+  renderAlertBar(); if (S.sec==='cockpit') renderAlerts();
+}
+const openAlerts = () => S.alerts.filter(a => !a.ack);
+function renderAlertBar(){
+  const open = openAlerts(), bar = $('#alertBar'); if (!bar) return;
+  $('#bellN').textContent = open.length; $('#bellBtn').classList.toggle('hot', open.some(a=>a.sev==='crit'));
+  const top = open.find(a => a.sev==='crit');
+  $$('#kpis .kpi').forEach((k,i) => k.classList.toggle('hot', i===2 && !!top));
+  if (!top || S.mode==='deck') { bar.hidden = true; return; }
+  bar.hidden = false;
+  bar.innerHTML = `<span aria-hidden="true">⚠</span><span class="grow">${esc(top.title)}${top.body?' — <span style="font-weight:400">'+esc(top.body)+'</span>':''}</span>${top.go?`<button class="btn" data-go="${top.go}" data-alert="${top.id}">Open</button>`:''}<button class="btn ghost" data-ack="${top.id}">Acknowledge</button>${open.length>1?`<span style="font-weight:400">+${open.length-1} more</span>`:''}`;
+}
+function renderAlerts(){
+  const el = $('#alertList'); if (!el) return; const open = openAlerts();
+  $('#alertCount').textContent = `${open.length} open · ${S.alerts.length} total`;
+  el.innerHTML = S.alerts.length ? S.alerts.map(a => `<div class="al ${a.sev==='crit'&&!a.ack?'crit':''}"><span class="when">${new Date(a.at).toLocaleTimeString('en-GB',{hour12:false,timeZone:TZ})}</span><div><b>${esc(a.title)}</b><div class="note">${esc(a.body||'')}</div></div><div style="display:flex;gap:6px">${a.go?`<button class="btn sm" data-go="${a.go}" data-alert="${a.id}">Open</button>`:''}${a.ack?'<span class="tag ok">Acknowledged</span>':`<button class="btn sm" data-ack="${a.id}">Acknowledge</button>`}</div></div>`).join('') : '<div class="empty">No alerts. Run a scenario or send a crew report to see one.</div>';
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-ack]'); if (b) { const a = S.alerts.find(x=>x.id===b.dataset.ack); if (a) a.ack = true; renderAlertBar(); renderAlerts(); return; }
+  const o = e.target.closest('[data-alert]'); if (o) { const a = S.alerts.find(x=>x.id===o.dataset.alert); if (a?.lat!=null && a.go==='investigate') setTimeout(() => { $('#ivText').value = a.text||''; S.draft = { c:[+a.lat, +a.lon], manual:true }; $('#ivWhere').textContent = `Location: ${where(S.draft.c)} (crew position)`; redrawMap(); fitView(); }, 60); }
+});
+
+/* crew orders: live = CAP Dispatches, demo = browser storage shared between tabs */
+const bc = ('BroadcastChannel' in window) ? new BroadcastChannel('sap-rerouting') : null;
+const localDisp = () => (store.get().dispatches || []);
+function saveLocalDisp(list){ const ls = store.get(); ls.dispatches = list.slice(0,100); store.set(ls); }
+function localOrder(o){ const row = { ID: crypto.randomUUID?.() || String(Date.now()+Math.random()), status:'Sent', createdAt:new Date().toISOString(), ...o }; DB.dispatches = [row, ...localDisp()]; S.seenDisp[row.ID] = 'Sent'; saveLocalDisp(DB.dispatches); bc?.postMessage({ t:'disp' }); }
+async function replyDispatch(id, status, note){
+  if (DB.live) { try { const r = await api('/reply', { method:'POST', body:JSON.stringify({ ID:id, status, note }) }); const i = DB.dispatches.findIndex(x=>x.ID===id); if (i>=0) DB.dispatches[i] = r; } catch(e){ toast('Reply failed: '+e.message, 'crit'); return; } }
+  else { DB.dispatches = localDisp(); const d = DB.dispatches.find(x=>x.ID===id); if (d) Object.assign(d, { status, reply:note||'', repliedAt:new Date().toISOString() }); saveLocalDisp(DB.dispatches); bc?.postMessage({ t:'disp' }); }
+  toast(status==='Accepted' ? 'Accepted · Command Center informed' : 'Problem sent · Command Center alerted'); renderDeck();
+}
+async function pollDispatches(){
+  if (DB.live) { try { DB.dispatches = (await api('/Dispatches?$orderby=createdAt desc&$top=100')).value; } catch(e){ return; } }
+  else DB.dispatches = localDisp();
+  let changed = false;
+  for (const d of DB.dispatches) {
+    const prev = S.seenDisp[d.ID]; if (prev === d.status) continue;
+    S.seenDisp[d.ID] = d.status; changed = true;
+    if (prev === undefined && d.status === 'Sent') { if (S.mode==='deck' && d.asset_ID===S.deckWho) beep(); continue; }
+    const a = assetById(d.asset_ID); const who = `${a?.captain||''} (${a?.name||d.asset_ID})`; const K = DB.live ? 'sap' : 'sim';
+    if (d.status === 'Accepted') { S.log.push([clockT(), `${who} accepted: ${d.routeName}`, 'ok', K]); renderLog(); if (S.mode==='cc') toast(`${who} accepted the reroute`); }
+    if (d.status === 'Problem') { S.log.push([clockT(), `${who} reported a problem: ${d.reply||''}`, '', K]); renderLog(); raise({ id:'P'+d.ID, title:`Crew cannot follow reroute · ${a?.name||d.asset_ID}`, body:d.reply||'No details', go:'approval' }); }
+  }
+  if (changed && S.sec.startsWith('deck')) renderDeck();
+}
+async function pollReports(){
+  if (!DB.live) return;
+  try { const r = await api(`/Incidents?$filter=status eq 'Reported by crew'&$orderby=detectedAt desc&$top=20`); r.value.forEach(i => { if (Date.parse(i.detectedAt) >= Date.now() - 15*60e3) crewAlert(i); }); } catch(e){}
+}
+function crewAlert(i){ raise({ id:'R'+(i.ID||i.code), title:`Crew report · ${i.assets||''}: ${i.kind} (${i.severity})`, body:i.title, go:'investigate', lat:i.lat, lon:i.lon, text:i.title }); }
+bc && (bc.onmessage = m => { if (m.data?.t==='disp') pollDispatches(); if (m.data?.t==='report') crewAlert(m.data.inc); });
+
+const myDisp = () => DB.dispatches.filter(d => d.asset_ID===S.deckWho).sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt));
+function renderDeck(){
+  const who = $('#deckWho'); if (!who) return;
+  if (!who.options.length) { who.innerHTML = DB.assets.map(a=>`<option value="${a.ID}">${esc(a.captain||'')} · ${esc(a.name)} (${a.type==='VESSEL'?'vessel':'truck'})</option>`).join(''); who.value = S.deckWho; }
+  const a = assetById(S.deckWho); if (!a) return;
+  $('#deckConn').innerHTML = DB.live ? `<span class="dot"></span><span>Connected · ${onBTP() ? 'SAP BTP' : esc(apiHost())}</span>` : '<span class="dot gold"></span><span>Demo · syncs across tabs</span>';
+  $('#pTitle').textContent = (a.type==='VESSEL'?'⚓ ':'🚚 ') + a.name; $('#pClock').textContent = clockT().slice(0,5);
+  $('#deckKv').innerHTML = `<dt>Crew</dt><dd>${esc(a.captain||'—')}</dd><dt>Cargo</dt><dd>${esc(a.info)}</dd><dt>Destination</dt><dd>${esc(a.destination)}</dd><dt>Planned route</dt><dd>${esc(routesOf(a)[0]?.name||'—')}</dd><dt>ETA</dt><dd>${fmtDT(a.plan?.etaAt ?? a.etaAt)}</dd><dt>POs on board</dt><dd>${posOf([a.ID]).length}</dd>`;
+  const list = myDisp(); const cur = list.find(d => d.status==='Sent') || list[0]; const isNew = cur && cur.status==='Sent';
+  const keep = $('#probTxt')?.value, hadFocus = document.activeElement?.id==='probTxt';
+  $('#deckMain').innerHTML = !cur ? `<div class="calm"><div class="ic">✅</div><b>No changes. Continue on the planned route.</b><div class="note">${esc(routesOf(a)[0]?.name||'')}</div><div class="note">New orders from the Command Center appear here.</div></div>`
+    : `<div class="order ${isNew?'new':''}"><div class="eyebrow">${isNew?'New reroute order':'Order '+esc(cur.status).toLowerCase()} · ${esc(cur.incidentCode||'')}</div><h2>${esc(cur.routeName||'Reroute')}</h2><p style="margin:0 0 8px">${esc(cur.instruction||'')}</p><dl class="kv"><dt>New ETA</dt><dd>${fmtDT(Date.parse(cur.newEta))}</dd><dt>Sent</dt><dd>${fmtDT(Date.parse(cur.createdAt))}</dd>${cur.reply?`<dt>Your note</dt><dd>${esc(cur.reply)}</dd>`:''}</dl>
+      ${isNew && S.probOpen===cur.ID ? `<label for="probTxt" class="note">What is the problem?</label><textarea id="probTxt" style="min-height:70px">Road on the new route is also closed</textarea><div class="big"><button class="btn danger" data-probsend="${cur.ID}">Send problem</button><button class="btn ghost" data-probcancel="1">Cancel</button></div>` : isNew ? `<div class="big"><button class="btn gold" data-acc="${cur.ID}">✔ Accept</button><button class="btn danger" data-prob="${cur.ID}">✖ Problem</button></div>` : `<span class="tag ${cur.status==='Accepted'?'ok':'crit'}">${esc(cur.status)}</span>`}</div>`;
+  if (keep != null && $('#probTxt')) { $('#probTxt').value = keep; if (hadFocus) $('#probTxt').focus(); }
+  $('#deckOrdN').textContent = `${list.length} order${list.length===1?'':'s'}`;
+  $('#deckOrders').innerHTML = list.length ? `<div class="tw"><table><thead><tr><th>Sent</th><th>Incident</th><th>Route</th><th>New ETA</th><th>Status</th><th>Note</th></tr></thead><tbody>${list.map(d=>`<tr><td class="mono">${fmtDT(Date.parse(d.createdAt))}</td><td class="mono">${esc(d.incidentCode||'')}</td><td>${esc(d.routeName||'')}</td><td class="mono">${fmtDT(Date.parse(d.newEta))}</td><td><span class="tag ${d.status==='Accepted'?'ok':d.status==='Problem'?'crit':'gold'}">${esc(d.status)}</span></td><td class="note">${esc(d.reply||'')}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">No orders for this vehicle yet.</div>';
+}
+document.addEventListener('change', e => { if (e.target.id==='deckWho') { S.deckWho = e.target.value; S.probOpen = null; renderDeck(); } });
+document.addEventListener('click', e => {
+  const acc = e.target.closest('[data-acc]'); if (acc) return replyDispatch(acc.dataset.acc, 'Accepted', 'Following the new route');
+  const pr = e.target.closest('[data-prob]'); if (pr) { S.probOpen = pr.dataset.prob; renderDeck(); setTimeout(() => $('#probTxt')?.focus(), 30); return; }
+  const ps = e.target.closest('[data-probsend]'); if (ps) { const note = ($('#probTxt')?.value || '').trim() || 'No details'; S.probOpen = null; return replyDispatch(ps.dataset.probsend, 'Problem', note); }
+  if (e.target.closest('[data-probcancel]')) { S.probOpen = null; renderDeck(); }
+});
+const REP_SAMPLES = ['Water over the road near the Palar bridge at Ambur, police stopping trucks.','Engine overheating, reducing speed, Bay of Bengal.','Long queue at Colombo anchorage, pilot says 20 hours wait.','Rocks falling on the ghat road near Sakleshpur.'];
+async function sendReport(){
+  const txt = $('#repText').value.trim(); if (!txt) { toast('Describe what is happening first.'); return; }
+  const a = assetById(S.deckWho); $('#repSend').disabled = true; $('#repNote').textContent = 'Classifying…';
+  const { r:cls } = await classifyAny(txt);
+  const c = cls.coordinates || [a.lat, a.lon];
+  const inc = { code:`RPT-${String(Date.now()).slice(-6)}`, title:txt.slice(0,120), kind:cls.event_type, mode:a.type==='VESSEL'?'Sea':'Road', severity:cls.severity, confidence:cls.confidence, lat:c[0], lon:c[1], radiusKm:30, assets:a.name, chosenRoute:'—', status:'Reported by crew', detectedAt:new Date().toISOString(), posAffected:posOf([a.ID]).length, posProtected:0 };
+  if (DB.live) { try { const r = await api('/Incidents', { method:'POST', body:JSON.stringify(inc) }); inc.ID = r.ID; } catch(e){ toast('Report failed: '+e.message, 'crit'); $('#repSend').disabled = false; $('#repNote').textContent = ''; return; } }
+  else { inc.ID = 'L'+Date.now(); persistLocal('incidents', inc); bc?.postMessage({ t:'report', inc }); crewAlert(inc); }
+  DB.incidents.unshift(inc);
+  $('#repSend').disabled = false; $('#repNote').textContent = '';
+  $('#repOut').innerHTML = `<div class="ares"><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="tag gold">${esc(cls.event_type)}</span><span class="tag ${sevCls(cls.severity)}">${esc(cls.severity)}</span><span class="tag">conf ${(+cls.confidence).toFixed(2)}</span></div><div class="note">Sent ${clockT()} IST · classified by ${esc(cls.engine || 'rules in page')}</div><div class="note">The Command Center now shows a red alert with your report.</div></div>`;
+  toast('Report sent to Command Center');
+}
+function initFinale(){
+  $('#bellBtn').onclick = () => go('cockpit');
+  $('#sndBtn').onclick = async () => { S.sound = !S.sound; if (S.sound && 'Notification' in window && Notification.permission==='default') { try { await Notification.requestPermission(); } catch(e){} } $('#sndBtn').textContent = `🔔 Sound + desktop alerts: ${S.sound?'on':'off'}`; if (S.sound) beep(); };
+  $('#testAlert').onclick = () => raise({ title:'Test alert', body:'Cockpit alerting works', go:'cockpit' });
+  $('#repChips').innerHTML = REP_SAMPLES.map((t,i)=>`<button class="chip" data-rp="${i}">${esc(t.slice(0,32))}…</button>`).join('');
+  $('#repChips').onclick = e => { const b = e.target.closest('[data-rp]'); if (b) $('#repText').value = REP_SAMPLES[b.dataset.rp]; };
+  $('#repSend').onclick = sendReport;
+  if (!DB.live) DB.dispatches = localDisp();
+  DB.dispatches.forEach(d => S.seenDisp[d.ID] = d.status);
+  setInterval(() => { pollDispatches(); pollReports(); }, CFG.poll || 4000);
+  renderAlertBar();
 }
 
 /* ================= BOOT ================= */
@@ -1990,7 +2192,9 @@ function refresh(){
   for (let i=0;i<8;i++) tick(); setInterval(tick, 2200);
   renderSrc(); renderCls(); renderCockpit(); renderArch(); renderLog(); fillOrderForm(); refresh(); selfTest();
   const start = (location.hash||'').slice(1);
-  go('overview');
+  initFinale();
+  let qm = null; try { qm = new URLSearchParams(location.search).get('mode'); } catch(e){}
+  if (/^deck/.test(start) || qm==='deck') setMode('deck'); else go('overview');
 })();
 </script>
 

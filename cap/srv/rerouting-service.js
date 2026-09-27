@@ -1,8 +1,9 @@
 const cds = require('@sap/cds');
-const rules = require('../app/hydra-rules.js');
+const rules = require('../app/rerouting-rules.js');
+const aiCore = require('./ai-core');
 
-const LOG = cds.log('hydra');
-const TOPIC = 'hydra/reroute/v1/approved';
+const LOG = cds.log('rerouting');
+const TOPIC = 'rerouting/reroute/v1/approved';
 const TRACKED = ['ConfirmedDelivery', 'DeliveryDate', 'Asset_ID', 'SLATier', 'Quantity'];
 const fmt = v => v ? new Date(v).toLocaleString('sv-SE', { timeZone: 'Asia/Kolkata' }).slice(0, 16) : ''; // IST, same as UI
 const isDateField = f => /Date|Delivery/.test(f);
@@ -11,7 +12,7 @@ let anchoredAt = STARTED, snapshot = null;
 
 /** Write one OrderHistory row per tracked field that actually changed (like MM change documents). */
 async function logChanges(key, before, after, source) {
-  const { OrderHistory } = cds.entities('hydra');
+  const { OrderHistory } = cds.entities('rerouting');
   const rows = [];
   for (const f of TRACKED) if (f in after && String(after[f] ?? '') !== String(before[f] ?? '')) {
     const same = isDateField(f) && before[f] && after[f] && Date.parse(before[f]) === Date.parse(after[f]);
@@ -26,7 +27,7 @@ async function logChanges(key, before, after, source) {
 }
 
 async function nextIncidentCode() {
-  const { Incidents } = cds.entities('hydra');
+  const { Incidents } = cds.entities('rerouting');
   const year = new Date().getFullYear();
   const codes = await SELECT.from(Incidents).columns('code').where({ code: { like: `INC-${year}-%` } });
   const n = Math.max(412, ...codes.map(c => Number(String(c.code).slice(9)) || 0)) + 1;
@@ -35,7 +36,7 @@ async function nextIncidentCode() {
 
 /** Demo seeds: make due dates and ETAs relative to "now" so the demo never goes stale. */
 async function anchor() {
-  const { PurchaseOrders, Assets } = cds.entities('hydra');
+  const { PurchaseOrders, Assets } = cds.entities('rerouting');
   const now = Date.now(), h = 36e5;
   const assets = Object.fromEntries((await SELECT.from(Assets)).map(a => [a.ID, a]));
   for (const po of await SELECT.from(PurchaseOrders).where('DueOffsetHours is not null')) {
@@ -52,16 +53,18 @@ function info() {
   const db = cds.env.requires.db || {}, msg = cds.env.requires.messaging || {};
   return {
     version: require('../package.json').version, startedAt: STARTED, anchoredAt,
-    db: `${db.kind}${db.credentials?.url === ':memory:' ? ' (in-memory)' : ''}`,
-    messaging: msg.kind || 'none', auth: cds.env.requires.auth?.kind || String(cds.env.requires.auth), classifier: rules.VERSION
+    db: db.kind === 'hana' ? 'hana (SAP HANA Cloud, HDI container)' : `${db.kind}${db.credentials?.url === ':memory:' ? ' (in-memory)' : ''}`,
+    messaging: msg.kind || 'none', auth: cds.env.requires.auth?.kind || String(cds.env.requires.auth), classifier: rules.VERSION,
+    aiCore: aiCore.status(),
+    runtime: process.env.VCAP_APPLICATION ? `SAP BTP Cloud Foundry · ${JSON.parse(process.env.VCAP_APPLICATION).application_name}` : 'local'
   };
 }
 
-module.exports = class HydraService extends cds.ApplicationService {
+module.exports = class ReroutingService extends cds.ApplicationService {
   async init() {
     const { PurchaseOrders } = this.entities;
-    const db = cds.entities('hydra');
-    const sourceOf = req => { try { return decodeURIComponent(req.headers?.['x-hydra-source'] || 'Orders & SLA'); } catch { return 'Orders & SLA'; } };
+    const db = cds.entities('rerouting');
+    const sourceOf = req => { const h = req.headers || {}; try { return decodeURIComponent(h['x-rerouting-source'] || h['x-hydra-source'] || 'Orders & SLA'); } catch { return 'Orders & SLA'; } };
 
     // Number range: next free PO number, like an MM number-range object
     this.before('CREATE', PurchaseOrders, async req => {
@@ -92,17 +95,34 @@ module.exports = class HydraService extends cds.ApplicationService {
     });
 
     // Agent 2 · classifier
-    this.on('classify', req => {
+    this.on('classify', async req => {
       const text = String(req.data.text || '');
       if (!text.trim()) return req.error(400, 'text is required');
       if (text.length > 2000) return req.error(400, 'text is limited to 2000 characters');
+      const ai = await aiCore.classify(text);
+      if (ai) {
+        // keep the gazetteer's exact coordinates when the rules know the place (LLMs are vague on lat/lon)
+        const r0 = rules.classify(text);
+        if (r0.coordinates && (ai.lat == null || ai.lon == null)) { ai.lat = r0.coordinates[0]; ai.lon = r0.coordinates[1]; }
+        return ai;
+      }
       const r = rules.classify(text);
-      return { ...r, lat: r.coordinates?.[0] ?? null, lon: r.coordinates?.[1] ?? null, coordinates: undefined };
+      return { ...r, lat: r.coordinates?.[0] ?? null, lon: r.coordinates?.[1] ?? null, coordinates: undefined,
+        note: aiCore.bound() ? `AI Core unavailable (${aiCore.lastError() || 'error'}), rules used` : 'AI Core not bound, rules used' };
+    });
+
+    // Deck app · captain or driver answers a reroute order
+    this.on('reply', async req => {
+      const { ID, status, note } = req.data;
+      if (!['Accepted', 'Problem'].includes(status)) return req.error(400, 'status must be Accepted or Problem');
+      const n = await UPDATE(db.Dispatches, ID).set({ status, reply: String(note || '').slice(0, 300), repliedAt: new Date().toISOString() });
+      if (!n) return req.error(404, 'Dispatch order not found');
+      return SELECT.one.from(db.Dispatches, ID);
     });
 
     // Agent 5 · dispatch: all writes succeed or none do (CAP wraps the handler in one transaction)
     this.on('dispatchPlan', async req => {
-      const { incident = {}, updates = [], source } = req.data;
+      const { incident = {}, updates = [], source, orders = [] } = req.data;
       const src = String(source || 'Dispatch agent').slice(0, 80);
       if (!incident.title) return req.error(400, 'incident.title is required');
       let changes = 0;
@@ -120,18 +140,24 @@ module.exports = class HydraService extends cds.ApplicationService {
       const ID = cds.utils.uuid(), code = inc.code || await nextIncidentCode();
       await INSERT.into(db.Incidents).entries({ ...inc, ID, code, detectedAt: inc.detectedAt || new Date().toISOString() });
 
+      // crew orders for the deck app, in the same transaction
+      for (const o of orders || []) {
+        if (!o.asset_ID) return req.error(400, 'orders[].asset_ID is required');
+        if (!await SELECT.one.from(db.Assets).where({ ID: o.asset_ID })) return req.error(404, `Unknown asset ${o.asset_ID}`);
+        await INSERT.into(db.Dispatches).entries({ ID: cds.utils.uuid(), incidentCode: code, asset_ID: o.asset_ID, routeName: o.routeName, instruction: o.instruction, newEta: o.newEta, status: 'Sent' });
+      }
       const eventId = cds.utils.uuid();
       const payload = { eventId, incident: ID, code, title: inc.title, route: inc.chosenRoute, assets: inc.assets, pos: updates.map(u => `${u.PurchaseOrder}/${u.PurchaseOrderItem}`), at: new Date().toISOString() };
       const messaging = await cds.connect.to('messaging');
       await messaging.emit(TOPIC, payload); // delivered after commit
       LOG.info(`dispatch ${code}: ${updates.length} PO(s), ${changes} change(s), event ${eventId}`);
-      return { incident: ID, code, posUpdated: updates.length, changes, eventId, topic: TOPIC };
+      return { incident: ID, code, posUpdated: updates.length, changes, eventId, topic: TOPIC, ordersSent: (orders || []).length };
     });
 
     this.on('info', () => info());
     this.on('resetDemo', async () => {
       if (!snapshot) return info();
-      for (const e of ['EventLog', 'OrderHistory', 'Incidents', 'PurchaseOrders']) await DELETE.from(db[e]);
+      for (const e of ['Dispatches', 'EventLog', 'OrderHistory', 'Incidents', 'PurchaseOrders']) await DELETE.from(db[e]);
       for (const [e, rows] of Object.entries(snapshot)) if (rows.length) await INSERT.into(db[e]).entries(rows);
       await anchor();
       return info();
@@ -142,7 +168,7 @@ module.exports = class HydraService extends cds.ApplicationService {
 };
 
 cds.on('served', async () => {
-  const db = cds.entities('hydra');
+  const db = cds.entities('rerouting');
   await anchor();
   snapshot = {
     PurchaseOrders: await SELECT.from(db.PurchaseOrders),

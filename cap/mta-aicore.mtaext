@@ -1,0 +1,15 @@
+# Adds the SAP AI Core binding. Use it only when an AI Core service instance exists in the space
+# (BTP cockpit → Instances → an "SAP AI Core" instance; put its name below).
+#   mbt build && cf deploy mta_archives/sap-rerouting_2.0.0.mtar -e mta-aicore.mtaext
+_schema-version: '3.1'
+ID: sap-rerouting-aicore
+extends: sap-rerouting
+modules:
+  - name: sap-rerouting-srv
+    requires:
+      - name: sap-rerouting-aicore
+resources:
+  - name: sap-rerouting-aicore
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: sap-rerouting-aicore

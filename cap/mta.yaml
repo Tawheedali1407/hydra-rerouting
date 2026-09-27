@@ -1,0 +1,52 @@
+_schema-version: '3.1'
+ID: sap-rerouting
+version: 2.0.0
+description: SAP Rerouting on SAP BTP - CAP service + web UI on Cloud Foundry, data in SAP HANA Cloud
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production --profile hana
+
+modules:
+  - name: sap-rerouting-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+      disk-quota: 1024M
+      health-check-type: http
+      health-check-http-endpoint: /health
+    properties:
+      CDS_ENV: hana
+      CORS_ORIGINS: '*'
+      AI_MODEL: gpt-4o-mini
+      AI_RESOURCE_GROUP: default
+    build-parameters:
+      builder: npm
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: sap-rerouting-db
+
+  - name: sap-rerouting-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+    requires:
+      - name: sap-rerouting-db
+
+resources:
+  - name: sap-rerouting-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared

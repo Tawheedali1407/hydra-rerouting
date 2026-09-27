@@ -1,4 +1,4 @@
-# Hydra Rerouting
+# SAP Rerouting
 
 Multi-agent disruption rerouting on **SAP BTP**: detect → classify → match purchase orders → reroute → approve → dispatch.
 The UI is one page. The backend is an **SAP CAP** service (OData v4) that holds the orders, runs the classifier and writes every approved plan back in one transaction.
@@ -12,7 +12,7 @@ The UI is one page. The backend is an **SAP CAP** service (OData v4) that holds 
 | Hosting | CAP app on BTP Cloud Foundry (serves UI + API) | Built, deploy with one workflow | Same |
 | Data and APIs | CAP OData v4 service, 6 entities | **Live** when connected | Same |
 | PO write-back | CAP action `dispatchPlan`: PO confirmations, change log, incident and event in **one transaction** | **Live, tested** (rollback tested too) | Delegate to S/4HANA |
-| Classifier | Rule engine (`hydra-rules.js`) served as CAP function `classify()` | **Live, rules** | LLM on SAP AI Core, same output contract |
+| Classifier | Rule engine (`rerouting-rules.js`) served as CAP function `classify()` | **Live, rules** | LLM on SAP AI Core, same output contract |
 | Business events | CAP messaging, local in-process broker, subscriber writes `EventLog` | **Live, local broker** | SAP Event Mesh: change `messaging.kind`, bind the service |
 | Database | SQLite in memory, reset on restart | Live | SAP HANA Cloud (`cds add hana`) |
 | Purchase orders | CAP entity with S/4HANA `A_PurchaseOrderItem` fields, sample data | Sample data | `API_PURCHASEORDER_PROCESS_SRV` as a CAP remote service |
@@ -49,10 +49,10 @@ Open the route `cf push` prints. The top bar shows **SAP CAP · live on BTP**.
 
 ### Pointing another copy of the UI at the backend
 The UI finds its backend in this order: `?api=<url>` in the address bar (remembered), a URL saved from the **data pill** in the top bar,
-then the same origin. `?api=demo` forces demo data. The service allows cross-origin calls from origins in `HYDRA_CORS_ORIGINS`
+then the same origin. `?api=demo` forces demo data. The service allows cross-origin calls from origins in `CORS_ORIGINS`
 (set in `cap/manifest.yml`; GitHub Pages and localhost are allowed by default).
 
-Example: `https://<user>.github.io/hydra-rerouting/?api=https://hydra-rerouting-xxxx.cfapps.us10-001.hana.ondemand.com`
+Example: `https://<user>.github.io/hydra-rerouting/?api=https://sap-rerouting-xxxx.cfapps.us10-001.hana.ondemand.com`
 
 Note that GitHub Pages only works for a private repository on a paid GitHub plan; the BTP app serves the UI itself, so you do not need Pages.
 
@@ -64,14 +64,14 @@ npm run test:e2e   # 4 browser tests: same origin, cross origin (CORS), demo mod
 ```
 CI runs both on every push.
 
-## CAP service (`/odata/v4/hydra`)
+## CAP service (`/odata/v4/rerouting`)
 | Entity / operation | Purpose |
 |---|---|
 | `Assets` | Vessels and trucks: position and base ETA |
 | `PurchaseOrders` | S/4HANA PO item fields plus SLA tier (Gold 0 h, Silver 12 h, Bronze 48 h). Create and PATCH write change documents |
 | `Incidents` | Every disruption, chosen plan, response time and POs kept within SLA |
 | `OrderHistory` | Change log written by the service on every PO create or update |
-| `EventLog` | Business events received by the subscriber (`hydra/reroute/v1/approved`) |
+| `EventLog` | Business events received by the subscriber (`rerouting/reroute/v1/approved`) |
 | `EventStats` | Sample daily sensing volumes |
 | `classify(text)` | Agent 2: type, severity, location, confidence, next action |
 | `dispatchPlan(incident, updates, source)` | Agent 5: all writes for an approved plan, atomically |

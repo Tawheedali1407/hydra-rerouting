@@ -1,29 +1,44 @@
 {
-  "name": "hydra-rerouting",
-  "version": "1.1.0",
-  "description": "Hydra Rerouting - SAP CAP OData service and UI for autonomous disruption rerouting",
+  "name": "sap-rerouting",
+  "version": "2.0.0",
+  "description": "SAP Rerouting - SAP CAP service, command center and crew deck app for agentic supply-chain disruption rerouting",
   "private": true,
   "scripts": {
     "start": "cds-serve",
     "watch": "cds watch",
-    "test": "node --test test/api.test.js",
+    "test": "node --test test/api.test.js test/aicore-fallback.test.js",
     "test:e2e": "node --test test/e2e.test.mjs",
-    "sync-ui": "cp ../index.html ../hydra-rules.js ../leaflet.js app/"
+    "sync-ui": "cp ../index.html ../rerouting-rules.js ../leaflet.js app/",
+    "build:hana": "cds build --production --profile hana"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
-    "@sap/cds": "^10",
+    "@cap-js/hana": "^3",
     "@cap-js/sqlite": "^3",
+    "@sap-ai-sdk/orchestration": "^2",
+    "@sap/cds": "^10",
     "express": "^4"
   },
   "cds": {
     "requires": {
       "db": {
-        "kind": "sqlite",
-        "credentials": {
-          "url": ":memory:"
+        "[development]": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": ":memory:"
+          }
+        },
+        "[production]": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": ":memory:"
+          }
+        },
+        "[hana]": {
+          "kind": "hana",
+          "credentials": null
         }
       },
       "auth": "dummy",
@@ -36,6 +51,7 @@
     }
   },
   "devDependencies": {
+    "@sap/cds-dk": "^10.1.0",
     "playwright": "1.56.0"
   }
 }

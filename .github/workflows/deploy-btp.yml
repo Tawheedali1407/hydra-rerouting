@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['cap/**', 'index.html', 'hydra-rules.js', 'leaflet.js']
+    paths: ['cap/**', 'index.html', 'rerouting-rules.js', 'leaflet.js']
 
 jobs:
   deploy:
@@ -40,7 +40,7 @@ jobs:
           sudo mv cf8 /usr/local/bin/cf && cf version
       - name: Sync UI into the CAP app
         if: steps.ok.outputs.go == 'true'
-        run: cp index.html hydra-rules.js leaflet.js cap/app/
+        run: cp index.html rerouting-rules.js leaflet.js cap/app/
       - name: Push
         if: steps.ok.outputs.go == 'true'
         working-directory: cap
@@ -52,7 +52,7 @@ jobs:
       - name: Smoke test
         if: steps.ok.outputs.go == 'true'
         run: |
-          ROUTE=$(cf curl "/v3/apps?names=hydra-rerouting" | python3 -c "import sys,json;print(json.load(sys.stdin)['resources'][0]['guid'])" | xargs -I{} cf curl "/v3/apps/{}/routes" | python3 -c "import sys,json;print(json.load(sys.stdin)['resources'][0]['url'])")
+          ROUTE=$(cf curl "/v3/apps?names=sap-rerouting" | python3 -c "import sys,json;print(json.load(sys.stdin)['resources'][0]['guid'])" | xargs -I{} cf curl "/v3/apps/{}/routes" | python3 -c "import sys,json;print(json.load(sys.stdin)['resources'][0]['url'])")
           echo "App URL: https://$ROUTE"
-          curl -fsS "https://$ROUTE/odata/v4/hydra/info()"
-          echo "### Hydra is live: https://$ROUTE" >> "$GITHUB_STEP_SUMMARY"
+          curl -fsS "https://$ROUTE/odata/v4/rerouting/info()"
+          echo "### SAP Rerouting is live: https://$ROUTE" >> "$GITHUB_STEP_SUMMARY"

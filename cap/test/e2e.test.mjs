@@ -19,7 +19,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const CAP = path.join(HERE, '..'), ROOT = path.join(CAP, '..');
 const SHOTS = process.env.SHOTS_DIR || path.join(CAP, 'test', 'screenshots');
 const BPORT = 4201, SPORT = 4300;
-const BACK = `http://127.0.0.1:${BPORT}`, API = `${BACK}/odata/v4/hydra`, STATIC = `http://localhost:${SPORT}`;
+const BACK = `http://127.0.0.1:${BPORT}`, API = `${BACK}/odata/v4/rerouting`, STATIC = `http://localhost:${SPORT}`;
 let srv, web, browser;
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -68,7 +68,7 @@ test('A · same origin: approve writes POs, change log, incident and event to CA
 
   // classifier ran in the service, self-test passed
   await page.evaluate(() => go('classify'));
-  await page.waitForFunction(() => document.querySelector('#clsWhere').textContent === 'CAP classify()');
+  await page.waitForFunction(() => /^CAP classify\(\)|SAP AI Core/.test(document.querySelector('#clsWhere').textContent));
   await page.evaluate(() => go('cockpit'));
   await page.waitForFunction(() => document.querySelectorAll('#stOut .tag.ok').length === 5, null, { timeout: 8000 });
   await page.screenshot({ path: path.join(SHOTS, 'A-selftest.png') });
@@ -77,8 +77,9 @@ test('A · same origin: approve writes POs, change log, incident and event to CA
   await runAndApprove(page, 'storm');
   const log = await page.textContent('#dlog');
   assert.match(log, /SAPPO 4500018231\/10 confirmed delivery/);
-  assert.match(log, /SIMVoyage instruction/);
-  assert.match(log, /Event hydra\/reroute\/v1\/approved published/);
+  assert.match(log, /SAPVoyage instruction → Capt\. R\. Menon/); // crew order stored in CAP Dispatches
+  assert.equal((await get(`/Dispatches?$filter=asset_ID eq 'KB'`)).value.length, 1);
+  assert.match(log, /Event rerouting\/reroute\/v1\/approved published/);
   await page.screenshot({ path: path.join(SHOTS, 'A-dispatch.png') });
 
   const after = (await get(`/PurchaseOrders(PurchaseOrder='4500018231',PurchaseOrderItem='10')`)).ConfirmedDelivery;
@@ -99,7 +100,7 @@ test('A · same origin: approve writes POs, change log, incident and event to CA
 
   // history shows the business event
   await page.evaluate(() => { go('history'); document.querySelector('#histSeg [data-h="ev"]').click(); });
-  assert.match(await page.textContent('#evLog'), /hydra\/reroute\/v1\/approved/);
+  assert.match(await page.textContent('#evLog'), /rerouting\/reroute\/v1\/approved/);
   await page.evaluate(() => go('arch'));
   await page.screenshot({ path: path.join(SHOTS, 'A-architecture.png'), fullPage: true });
   assert.deepEqual(errors, []);
