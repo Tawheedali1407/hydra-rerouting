@@ -1,7 +1,7 @@
 # SAP Rerouting
 
 Multi-agent disruption rerouting on **SAP BTP**: detect → classify → match purchase orders → reroute → approve → dispatch.
-The UI is one page. The backend is an **SAP CAP** service (OData v4) that holds the orders, runs the classifier and writes every approved plan back in one transaction.
+The UI is one page with two menus: **Command Center** (operators) and **Captain / Driver on Deck** (crew). The backend is an **SAP CAP** service (OData v4) that holds the orders, runs the classifier, and writes every approved plan back in one transaction, including the reroute orders sent to the crew.
 
 ![CI](https://github.com/Tawheedali1407/hydra-rerouting/actions/workflows/ci.yml/badge.svg)
 
@@ -10,11 +10,13 @@ The UI is one page. The backend is an **SAP CAP** service (OData v4) that holds 
 | Capability | In this prototype | Status | Production path |
 |---|---|---|---|
 | Hosting | CAP app on BTP Cloud Foundry (serves UI + API) | Built, deploy with one workflow | Same |
-| Data and APIs | CAP OData v4 service, 6 entities | **Live** when connected | Same |
-| PO write-back | CAP action `dispatchPlan`: PO confirmations, change log, incident and event in **one transaction** | **Live, tested** (rollback tested too) | Delegate to S/4HANA |
-| Classifier | Rule engine (`rerouting-rules.js`) served as CAP function `classify()` | **Live, rules** | LLM on SAP AI Core, same output contract |
+| Data and APIs | CAP OData v4 service, 7 entities | **Live** when connected | Same |
+| PO write-back | CAP action `dispatchPlan`: PO confirmations, change log, incident, crew orders and event in **one transaction** | **Live, tested** (rollback tested too) | Delegate to S/4HANA |
+| Crew app | Captain / Driver deck: orders from `Dispatches`, answers through `reply()`, issue reports as incidents | **Live, tested** | Same service; native mobile app later |
+| Cockpit alerts | Alert bar, bell counter, alert list; raised by incidents, crew problems and crew reports | **Live** (polls CAP every 4 s) | SAP Alert Notification service / Event Mesh push |
+| Classifier | CAP function `classify()`: LLM on **SAP AI Core** (Generative AI Hub orchestration, `srv/ai-core.js`) when AI Core is bound; rule engine (`rerouting-rules.js`) otherwise | **Live**. The output badge and `info().aiCore` say which engine answered | Same |
 | Business events | CAP messaging, local in-process broker, subscriber writes `EventLog` | **Live, local broker** | SAP Event Mesh: change `messaging.kind`, bind the service |
-| Database | SQLite in memory, reset on restart | Live | SAP HANA Cloud (`cds add hana`) |
+| Database | SAP HANA Cloud HDI container when deployed with `mta.yaml` (`CDS_ENV=hana`); SQLite in memory for `cf push` / local | Live (`info().db` says which) | Same |
 | Purchase orders | CAP entity with S/4HANA `A_PurchaseOrderItem` fields, sample data | Sample data | `API_PURCHASEORDER_PROCESS_SRV` as a CAP remote service |
 | Freight lanes, geofences | Route catalogue and point-in-zone checks in the page | Sample data / in page | SAP TM, HANA Cloud spatial |
 | Sensing feeds, cockpit telemetry | Replayed sample events, illustrative charts | **Simulated** (labelled in the UI) | Integration Suite + AIS/IMD/USGS feeds |
@@ -33,7 +35,18 @@ npm install
 npm start          # http://localhost:4004 → UI + API, top bar shows "SAP CAP · live"
 ```
 
-### SAP BTP (hosted)
+### SAP BTP with HANA Cloud (the finale setup, from SAP Business Application Studio)
+1. Business Application Studio → create a **Full Stack Cloud Application** dev space → open a terminal.
+2. `git clone https://github.com/Tawheedali1407/hydra-rerouting && cd hydra-rerouting && git checkout sap-rerouting-finale && cd cap`
+3. `cf login` (API endpoint from the BTP subaccount overview), pick the org and space.
+4. `npm ci && mbt build && cf deploy mta_archives/sap-rerouting_2.0.0.mtar`
+   This creates the HDI container on your HANA Cloud instance, deploys tables and seed data, and starts the app with `CDS_ENV=hana`.
+5. **AI Core (optional):** if the space has an SAP AI Core instance, name it `sap-rerouting-aicore` (or edit `mta-aicore.mtaext`), make sure an
+   orchestration deployment exists in resource group `default` (AI Launchpad → ML Operations → Deployments), then
+   `cf deploy mta_archives/sap-rerouting_2.0.0.mtar -e mta-aicore.mtaext`.
+6. Open the app route. Cockpit → **Run self-test**, and `…/odata/v4/rerouting/info()` shows `db: hana…` and `aiCore: bound…`.
+
+### SAP BTP without HANA (fallback)
 Option A, GitHub Actions: add the secrets `CF_API`, `CF_USERNAME`, `CF_PASSWORD`, `CF_ORG`, `CF_SPACE`
 (Settings → Secrets and variables → Actions), then **Actions → Deploy to SAP BTP → Run workflow**. The run summary prints the app URL.
 
@@ -78,18 +91,22 @@ CI runs both on every push.
 | `info()`, `resetDemo()` | Runtime facts for the self-test; restore seed data before a demo |
 
 ## Demo script (4 minutes)
+Open two windows side by side: the Command Center, and the same URL with `?mode=deck` (or on a phone) as *Driver Murugan K*.
+
 1. **Resilience Cockpit → Run self-test**: five real calls to the CAP service, each timed. Shows the backend is live.
 2. **Command Center** → *Cyclone · Gulf of Aden*. Watch the five stages run.
 3. **AI Classification**: the output comes from the CAP `classify()` function (the tag says so).
 4. **Reroute**: drag Risk to 100 and the recommendation moves to the Cape.
 5. **Approve & Dispatch → Approve**. The dispatch log marks what was written to SAP CAP and what is simulated.
+   The driver's phone shows the reroute order within 4 seconds. Tap **Problem**: the Command Center gets a red alert.
+   On the deck, **Report an issue** sends a classified crew report. It appears as a cockpit alert that opens *Investigate* at the crew's position.
 6. **History**: the incident, every PO change document, and the published business event.
 7. **Architecture**: the "What is real" table. Say it out loud before anyone asks.
 
 Before presenting: click the data pill → **Reset demo data on server**.
 
 ## Likely judge questions
-- **"Is this hitting SAP AI Core?"** No. The classifier is a rule engine that runs as a CAP function. It returns the same JSON an AI Core model would, so replacing it is one handler.
+- **"Is this hitting SAP AI Core?"** Look at the badge on the classifier output. `SAP AI Core · <model>` means the LLM answered through the Generative AI Hub orchestration service. `CAP classify() · rules` means AI Core is not bound or failed, and the service fell back to rules (the note says why). `info().aiCore` shows the same thing.
 - **"Is this S/4HANA data?"** It is sample data in a CAP entity shaped like `A_PurchaseOrderItem`. Connecting S/4HANA means importing `API_PURCHASEORDER_PROCESS_SRV` as a CAP remote service; the handlers stay the same.
 - **"Is Event Mesh wired?"** CAP messaging is live with a local broker, and the events are real (see History → Business events). Event Mesh is a config change plus a service binding.
 - **"What happens if the write fails halfway?"** Nothing is written. `dispatchPlan` runs in one transaction; a test proves that one unknown PO rolls back the whole plan, and the UI lets the operator retry.
