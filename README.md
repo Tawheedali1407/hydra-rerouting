@@ -77,6 +77,12 @@ CI runs both on every push.
 | `dispatchPlan(incident, updates, source)` | Agent 5: all writes for an approved plan, atomically |
 | `info()`, `resetDemo()` | Runtime facts for the self-test; restore seed data before a demo |
 
+## Finale mode (SAP Hackfest North Finale, 30 Sep 2026)
+Two tabs under **Command Center** support the 10 + 5 minute slot:
+- **SAP Modules**: every SAP building block with an honest status (Live, Built, Sample, Planned), the Theme 1 agent team mapped to Hydra, and a note on the Learning Hub.
+- **Finale Showcase**: a 10 minute clock, a run of show that opens the right tab per segment, the guideline checklist, and the evaluation criteria mapped to the app.
+The Learning Hub practice systems are not required: the demo runs entirely on the CAP service in this repo.
+
 ## Demo script (4 minutes)
 1. **Resilience Cockpit → Run self-test**: five real calls to the CAP service, each timed. Shows the backend is live.
 2. **Command Center** → *Cyclone · Gulf of Aden*. Watch the five stages run.

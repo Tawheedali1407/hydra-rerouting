@@ -821,6 +821,30 @@ section.sec.on{display:flex}
 .tag.ok{border-color:rgba(43,178,76,.5);color:#1E8A3A}
 .tag.gold{border-color:var(--goldline);color:var(--gold);background:rgba(25,181,254,.08)}
 .tag.crit{background:rgba(229,72,77,.07)}.tag.warn{background:rgba(242,155,29,.09)}.tag.ok{background:rgba(43,178,76,.08)}
+
+/* SAP modules + finale */
+.mod{display:flex;flex-direction:column;gap:8px}
+.mod .mh{display:flex;align-items:flex-start;gap:8px}
+.mod .mh b{font-family:var(--serif);font-size:14px;color:var(--navy);line-height:1.25}
+.mod .mh .tag{margin-left:auto}
+.mod .st{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.mod p{margin:0;font-size:13px;color:var(--muted)}
+.mod .say{border-left:3px solid var(--sec);padding:2px 0 2px 10px;font-size:12.5px;color:var(--navy)}
+.mod .act{margin-top:auto;display:flex;gap:6px;flex-wrap:wrap}
+.tcount{font-family:var(--mono);font-size:44px;font-weight:500;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1}
+.tcount.warn{color:var(--warn)}.tcount.crit{color:var(--crit)}
+.tbar{height:8px;border-radius:99px;background:var(--n3);overflow:hidden;margin-top:10px}
+.tbar i{display:block;height:100%;width:0;background:var(--sec);transition:width .4s linear}
+.ros{display:flex;flex-direction:column;gap:6px}
+.ros .rs{display:grid;grid-template-columns:78px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.ros .rs.now{border-color:var(--sec);box-shadow:0 0 0 2px rgba(25,181,254,.18)}
+.ros .rs.past{opacity:.55}
+.ros .rs .tm{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.ros .rs b{font-size:13.5px;color:var(--navy)}
+.ros .rs .sub{font-size:12.5px;color:var(--muted)}
+.ck{display:flex;flex-direction:column;gap:6px}
+.ck label{display:flex;gap:9px;align-items:flex-start;font-size:13px;cursor:pointer}
+.ck input{margin-top:3px}
 /* tables */
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
@@ -987,6 +1011,30 @@ button.pill:hover{border-color:var(--gold2)}button.pill:focus-visible{outline:2p
             <div class="panel"><h3>Autonomous response cycle <span class="r" id="cycleClock">idle</span></h3><div class="stages vert" id="stagesA"></div></div>
           </div>
         </div>
+      </section>
+
+      <section class="sec" id="s-modules" data-title="SAP modules in this prototype" data-crumb="Command Center · SAP">
+        <p class="lede">Every SAP building block Hydra uses or is designed for, with its <b>honest status</b>. Judges score systems thinking, so this page says what runs today, what is stand-in data, and what the production path is.</p>
+        <div class="grid g4" id="modKpis"></div>
+        <div class="grid g3" id="modCards"></div>
+        <div class="panel"><h3>Theme 1 agent team mapped to Hydra <span class="r">Resilient Supply Chains</span></h3><div class="tw" id="modAgents"></div></div>
+        <div class="panel"><h3>SAP Learning Hub, student edition</h3><p class="note" style="margin:0">The guide says teams that use the Learning Hub learning have an edge. Hydra does <b>not</b> integrate with the Learning Hub, and no practice-system work is claimed here. In the room, name the courses you actually completed (for example the CAP or BTP developer paths) and tie each to a module above.</p></div>
+      </section>
+
+      <section class="sec" id="s-finale" data-title="Finale showcase" data-crumb="Command Center · 30 Sep 2026">
+        <p class="lede">SAP Hackfest North Finale, SRMIST. <b>15 minutes in total: 10 to present, 5 for Q&amp;A.</b> Going over time is penalised. Theme 1: Resilient Supply Chains. Round 2 asks for a <b>single-agent prototype</b> and a <b>full-system showcase</b> with autonomous rerouting, audit logging and human approval.</p>
+        <div class="grid g2">
+          <div class="panel"><h3>Presentation clock <span class="r">10 min + 5 min Q&amp;A</span></h3>
+            <div class="tcount" id="fClock">10:00</div><div class="tbar"><i id="fBar"></i></div>
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn gold" id="fStart">Start</button><button class="btn" id="fReset">Reset</button></div>
+            <p class="note" style="margin:10px 0 0" id="fNow">Press Start when you begin. The current segment is highlighted.</p>
+          </div>
+          <div class="panel"><h3>Before you walk in <span class="r">from the participant guideline</span></h3>
+            <div class="ck" id="fCheck"></div>
+          </div>
+        </div>
+        <div class="panel"><h3>Run of show</h3><div class="ros" id="fRos"></div></div>
+        <div class="panel"><h3>Evaluation criteria and where Hydra answers them</h3><div class="tw" id="fCrit"></div></div>
       </section>
 
       <section class="sec" id="s-sensing" data-title="Multi-source sensing" data-crumb="01 · Detect">
@@ -1373,7 +1421,7 @@ const phaseIdx = () => PH.indexOf(S.phase);
 
 /* ================= NAV ================= */
 const SECS = [
-  ['grp','Operate'],['overview','Command Center','◆'],
+  ['grp','Operate'],['overview','Command Center','◆'],['modules','SAP Modules','SAP'],['finale','Finale Showcase','10′'],
   ['grp','Pipeline'],['sensing','Sensing','01'],['classify','Classification','02'],['impact','Impact · SAP','03'],['reroute','Reroute','04'],['approval','Approve & Dispatch','05'],
   ['grp','Operations'],['investigate','Investigate',''],['orders','Orders & SLA',''],['history','History',''],
   ['grp','Platform'],['cockpit','Resilience Cockpit',''],['arch','Architecture',''],
@@ -1394,7 +1442,7 @@ function go(id){
   if (slot) { slot.appendChild($('#map')); slot.classList.toggle('investigating', id==='investigate'); $('#maphint').hidden = id!=='investigate'; redrawMap(); setTimeout(() => { map.invalidateSize(); fitView(); }, 30); }
   $('#scroll').scrollTop = 0;
   try { history.replaceState(null,'','#'+id); } catch(e){}
-  if (id==='orders') renderOrders(); if (id==='history') renderHistory(); if (id==='arch') renderArch();
+  if (id==='orders') renderOrders(); if (id==='history') renderHistory(); if (id==='arch') renderArch(); if (id==='modules') renderModules(); if (id==='finale') renderFinale();
 }
 
 /* ================= MAP ================= */
@@ -1917,6 +1965,78 @@ function renderArch(){
     <tr><td><b>High-impact automation</b></td><td>Operator approval required; only life-safety dispatch runs first</td></tr></tbody></table>`;
 }
 
+
+/* ================= SAP MODULES + FINALE ================= */
+function renderModules(){
+  const L1 = DB.live;
+  const M = [
+    ['SAP CAP · CDS + OData v4','03 · 05', L1?T.live('Live'):T.built('Built'), 'Service layer. Six entities, the classify() function and the dispatchPlan action. Serves the UI and the API.', 'CAP is the SAP-recommended way to build BTP services, so this is the layer that stays when the data sources change.', 'impact', 'Show OData calls'],
+    ['SAP BTP · Cloud Foundry','Hosting', onBTP()?T.live('Live on BTP'):T.built('Ready · cf push'), 'Runs the CAP app. One manifest and a GitHub workflow deploy it.', 'Trial apps stop nightly, so start it in the cockpit before presenting.', 'arch', 'See architecture'],
+    ['dispatchPlan · one transaction','05 · Dispatch', L1?T.live('Live · tested'):T.built('Built · tested'), 'Writes PO confirmations, the change log, the incident and the event together. One unknown PO rolls the whole plan back.', 'Audit logging is a byproduct of the write, not a separate step someone can forget.', 'approval', 'Approve a plan'],
+    ['CAP messaging → SAP Event Mesh','05 · Events', L1?T.live('Live · local broker'):T.sim('Simulated'), 'Every approved plan publishes hydra/reroute/v1/approved. A subscriber writes it to EventLog.', 'Event Mesh is a config change plus a service binding. The events already exist.', 'history', 'Business events'],
+    ['Classifier agent → SAP AI Core','02 · Analyze', L1?T.live('Live · rules'):T.built('Rules in page'), 'Rule engine served as CAP classify(). Returns type, severity, location, confidence.', 'Not calling AI Core today. A model swaps in behind the same JSON contract.', 'classify', 'Run the single agent'],
+    ['S/4HANA purchase orders','03 · Assess', T.sim('Sample data'), 'CAP entity shaped like A_PurchaseOrderItem, with SLA tiers Gold, Silver and Bronze.', 'Sample data. Production imports API_PURCHASEORDER_PROCESS_SRV as a CAP remote service.', 'orders', 'Orders & SLA'],
+    ['SAP HANA Cloud','Data', T.plan('Planned'), 'In-memory SQLite today, reset on restart.', 'cds add hana moves persistence and adds spatial queries for geofences.', 'arch', 'What is real'],
+    ['SAP Build Process Automation','05 · Approve', T.built('In app'), 'Approve button with the decision recorded on the incident.', 'Production routes the approval as a workflow with roles and escalation.', 'approval', 'Approval step'],
+    ['SAP Transportation Management','04 · Reroute', T.sim('Sample data'), 'Lane catalogue scored on time, cost and risk with your sliders.', 'TM would supply real lanes, carriers and capacity.', 'reroute', 'Reroute options'],
+    ['SAP Integration Suite','01 · Detect', T.sim('Simulated'), 'Replayed AIS, IoT, IMD, USGS and news events, labelled Simulated.', 'Integration Suite would ingest the live feeds.', 'sensing', 'Sensing agent'],
+    ['SAP IBP · Joule agents','Scenario', T.plan('Concept'), 'Reroute scenarios play the scenario-planning role of the Theme 1 agent team.', 'IBP would supply demand and inventory context; Joule agents would be the conversational front.', 'reroute', 'Scenarios'],
+    ['XSUAA · authorisation','Security', T.plan('Planned'), 'No auth today (dummy).', 'cds add xsuaa and role collections for planner and approver.', 'arch', 'Safeguards'],
+  ];
+  const cnt = k => M.filter(m => m[2].includes(k)).length;
+  $('#modKpis').innerHTML = [['Live',cnt('>Live'),'Runs against the CAP service'],['Built',cnt('>Built')+cnt('>Ready')+cnt('>In app'),'Code exists, not connected here'],['Sample / simulated',cnt('>Sample')+cnt('>Simulated'),'Stand-in data, labelled'],['Planned',cnt('>Planned')+cnt('>Concept'),'Production path only']]
+    .map(k=>`<div class="panel kpi"><div class="eyebrow">${k[0]}</div><div class="v" style="margin-top:6px">${k[1]}</div><div class="d" style="font-family:var(--sans)">${k[2]}</div></div>`).join('');
+  $('#modCards').innerHTML = M.map(m=>`<div class="panel mod"><div class="mh"><div><div class="st">${m[1]}</div><b>${m[0]}</b></div>${m[2]}</div><p>${m[3]}</p><div class="say">${m[4]}</div><div class="act"><button class="btn sm" data-goto="${m[5]}">${m[6]}</button></div></div>`).join('');
+  $$('#modCards [data-goto]').forEach(b => b.onclick = () => go(b.dataset.goto));
+  const A = [
+    ['Sensing & Scenario agents','Agent 1 Sensing and Agent 4 Route planner: weighted scenarios over time, cost and risk','sensing'],
+    ['Logistics & Inventory agents','Agent 3 Impact (POs and SLA tiers) and the dispatch of the chosen lane','impact'],
+    ['Compliance & Human-in-the-Loop','Operator approval gate, single-transaction write-back, change log and business event as the audit trail','approval'],
+  ];
+  $('#modAgents').innerHTML = `<table><thead><tr><th>Guide asks for</th><th>Hydra component</th><th></th></tr></thead><tbody>${A.map(a=>`<tr><td><b>${a[0]}</b></td><td>${a[1]}</td><td><button class="btn sm" data-goto="${a[2]}">Open</button></td></tr>`).join('')}</tbody></table>`;
+  $$('#modAgents [data-goto]').forEach(b => b.onclick = () => go(b.dataset.goto));
+}
+
+const FIN = { total:600, t:600, run:false, iv:null };
+const FIN_SEGS = [
+  [0,90,'Problem and root cause','Who is hurt when a lane closes (medicine, food, farmer income). Why planning is slow: manual detection, siloed TMS and ERP data, hours to re-plan. Add the interviews or reports you actually have.','overview'],
+  [90,150,'Single-agent prototype','Round 2 asks for one working core agent. Run the classifier on a fresh sentence: type, severity, location, confidence.','classify'],
+  [150,390,'Full system, live disruption','Cyclone in the Gulf of Aden: sense, classify, match POs, reroute, human approves, dispatch. Move the Risk slider to show the Cape. Point at the SAP and SIM tags in the log.','overview'],
+  [390,480,'SAP modules and what is real','Open SAP Modules. Say what is live, what is sample data and what is planned before anyone asks.','modules'],
+  [480,555,'Systems thinking and rollout','Upstream and downstream links, second-order effects of the Cape route (days, fuel, port congestion elsewhere), shadow-mode rollout and approver training.','arch'],
+  [555,600,'Close','Hours of delay into minutes of governed response. Hand over to Q&A.','overview'],
+];
+const fmt = n => String(Math.floor(n/60)).padStart(2,'0') + ':' + String(n%60).padStart(2,'0');
+function finTick(){
+  const el = FIN.total - FIN.t, cur = FIN_SEGS.findIndex(g => el>=g[0] && el<g[1]);
+  const c = $('#fClock'); if (!c) return;
+  c.textContent = fmt(Math.max(0,FIN.t)); c.className = 'tcount' + (FIN.t<=0?' crit':FIN.t<=60?' warn':'');
+  $('#fBar').style.width = Math.min(100, el/FIN.total*100) + '%';
+  $$('#fRos .rs').forEach((r,i) => { r.classList.toggle('now', i===cur); r.classList.toggle('past', cur===-1 ? el>=FIN.total : i<cur); });
+  $('#fNow').textContent = FIN.t<=0 ? 'Time. Move to Q&A now.' : cur>=0 ? `Now: ${FIN_SEGS[cur][2]} (${fmt(Math.max(0,FIN_SEGS[cur][1]-el))} left in this part)` : 'Press Start when you begin.';
+}
+function renderFinale(){
+  $('#fRos').innerHTML = FIN_SEGS.map(g => `<div class="rs"><span class="tm">${fmt(g[0])} – ${fmt(g[1])}</span><div><b>${g[2]}</b><div class="sub">${g[3]}</div></div><button class="btn sm" data-goto="${g[4]}">Open</button></div>`).join('');
+  $$('#fRos [data-goto]').forEach(b => b.onclick = () => go(b.dataset.goto));
+  const CK = ['Everything runs from one laptop, no switching','Backup video of the full demo is ready and opens offline','Laptop charged, projector connector packed','BTP app started and demo data reset (data pill, then Reset demo data on server)','All team members present in the room','Rehearsed once against the clock, ending before 10:00'];
+  let saved = []; try { saved = JSON.parse(localStorage.getItem('hydra.finCk')||'[]'); } catch(e){}
+  $('#fCheck').innerHTML = CK.map((t,i)=>`<label><input type="checkbox" data-i="${i}" ${saved.includes(i)?'checked':''}>${t}</label>`).join('');
+  $$('#fCheck input').forEach(cb => cb.onchange = () => { const v = $$('#fCheck input').filter(x=>x.checked).map(x=>+x.dataset.i); try { localStorage.setItem('hydra.finCk', JSON.stringify(v)); } catch(e){} });
+  const C = [
+    ['Problem identification','Specificity','One scenario, Gulf of Aden closure hitting named POs, not "supply chains break".','overview'],
+    ['Problem identification','Root cause','Detection and re-planning are manual and split across systems, so response takes hours.','sensing'],
+    ['Problem identification','Stakeholder validation','Bring real evidence: who you spoke to, reports or data. The app does not supply this. Do not present assumptions as findings.',null],
+    ['Systems thinking','Process links','Upstream: feeds and sensing. Downstream: PO change documents, business event, S/4HANA and TM in production.','arch'],
+    ['Systems thinking','Second-order effects','Rerouting by the Cape adds days and fuel and can congest other ports; risk slider shows the trade-off.','reroute'],
+    ['Systems thinking','Change management','Operator approval gate, shadow mode first, planner and approver roles, training before autonomy grows.','approval'],
+  ];
+  $('#fCrit').innerHTML = `<table><thead><tr><th>Criterion</th><th>Dimension</th><th>How Hydra answers</th><th></th></tr></thead><tbody>${C.map(c=>`<tr><td><b>${c[0]}</b></td><td>${c[1]}</td><td>${c[2]}</td><td>${c[3]?`<button class="btn sm" data-goto="${c[3]}">Open</button>`:''}</td></tr>`).join('')}</tbody></table><p class="note" style="margin:8px 0 0">Viability and market defence are also expected in Q&A. The guide says themes are given, so you must arrive at and defend the problem statement yourselves.</p>`;
+  $$('#fCrit [data-goto]').forEach(b => b.onclick = () => go(b.dataset.goto));
+  $('#fStart').onclick = () => { if (FIN.run) { clearInterval(FIN.iv); FIN.run = false; $('#fStart').textContent = 'Resume'; } else { FIN.run = true; $('#fStart').textContent = 'Pause'; FIN.iv = setInterval(() => { FIN.t--; finTick(); if (FIN.t<=-300) { clearInterval(FIN.iv); FIN.run=false; } }, 1000); } };
+  $('#fReset').onclick = () => { clearInterval(FIN.iv); FIN.run = false; FIN.t = FIN.total; $('#fStart').textContent = 'Start'; finTick(); };
+  finTick();
+}
+
 /* ================= SELF-TEST (real calls, read-only) ================= */
 async function selfTest(){
   const out = $('#stOut'); $('#stWhen').textContent = '';
@@ -1990,7 +2110,7 @@ function refresh(){
   for (let i=0;i<8;i++) tick(); setInterval(tick, 2200);
   renderSrc(); renderCls(); renderCockpit(); renderArch(); renderLog(); fillOrderForm(); refresh(); selfTest();
   const start = (location.hash||'').slice(1);
-  go('overview');
+  go(SECS.some(x => x[0]===start) ? start : 'overview');
 })();
 </script>
 
