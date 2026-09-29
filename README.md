@@ -33,6 +33,9 @@ npm install
 npm start          # http://localhost:4004 → UI + API, top bar shows "SAP CAP · live"
 ```
 
+### Netlify (static, demo data)
+`netlify.toml` publishes the repo root. In Netlify: **Add new site → Import from Git → pick this repo**, leave the build command empty. The site runs on built-in demo data, so the top bar shows demo mode. To use a live backend, open the site with `?api=<BTP app URL>` and add the Netlify origin to `HYDRA_CORS_ORIGINS` in `cap/manifest.yml`.
+
 ### SAP BTP (hosted)
 Option A, GitHub Actions: add the secrets `CF_API`, `CF_USERNAME`, `CF_PASSWORD`, `CF_ORG`, `CF_SPACE`
 (Settings → Secrets and variables → Actions), then **Actions → Deploy to SAP BTP → Run workflow**. The run summary prints the app URL.
